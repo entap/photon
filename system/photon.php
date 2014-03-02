@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2013, Entap,Inc.
+ * Copyright (c) 2014, Entap,Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  */
 //
 //	Photon -- a simple php library for building simple web applications
-//	http://photon.tsubakiarts.co.jp/
+//	http://entap.github.com/photon
 //
 
 require_once 'photon_config.php';
