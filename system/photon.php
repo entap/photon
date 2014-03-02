@@ -549,7 +549,7 @@ function __embed($matches)
  * 文字列の改行コードを置換する
  * 
  * @param	string	$str		対象の文字列
- * @param	string	$new_line	改行コード
+ * @param	string	$newline	改行コード
  * @return	string	改行コードを置換した結果
  * @package	basic
  */
@@ -686,6 +686,7 @@ function tag_open($name, $attributes = NULL, $is_empty = FALSE)
 /**
  * HTML終了タグを生成する
  * 
+ * @param	string	$name		タグの名前
  * @return	string	生成した終了タグ
  * @package	html
  */
@@ -1781,7 +1782,7 @@ function form_get_file($name, $key)
 	// 名前の先頭と先頭以降に分ける
 	$keys = explode('.', str_replace(array('][', '[', ']'), '.', $name));
 	$head = array_shift($keys);
-	
+
 	// $_FILESの値を取得する
 	return array_get($_FILES[$head][$key], $keys);
 }
@@ -2386,7 +2387,7 @@ function db_escape($string)
  * mysql_real_escape_string関数を呼び出すため、
  * データベースへの接続を必要とする。
  * 
- * @param	string	$string	対象の文字列
+ * @param	string	$field	対象の文字列
  * @return	string	エスケープされた文字列
  * @package	db
  */
@@ -3081,6 +3082,7 @@ function sql_pop()
  * 処理対象のテーブル名を設定する
  * 
  * @param	string	$table	テーブル名
+ * @param	string	$alias	エイリアス名
  * @package	sql
  */
 function sql_table($table, $alias = NULL)
@@ -3164,6 +3166,7 @@ function sql_select($table = NULL, $alias = NULL)
  * - sql_value
  * 
  * @param	string	$table	テーブル名
+ * @param	string	$ignore	キーが重複する際に無視する場合はTRUE
  * @return	string	生成されたSQL文字列
  * @package	sql
  */
@@ -3717,6 +3720,7 @@ function redirect($url)
  * |* error_title	| エラーページのタイトル
  * 
  * @param	string	$message	エラーメッセージ
+ * @param	string	$severity	重要度
  * @package	controller
  */
 function fatal($message, $severity = 'fatal')
