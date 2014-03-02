@@ -26,10 +26,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-/**
- * 設定ファイル
- * @author	T.Matsuoka <matsuoka@entap.co.jp>
- */
+//
+//	Photon -- a simple php library for building simple web applications
+//	http://entap.github.com/photon
+//
 
 //------------------------------------------------------------------------------
 // フォーム
