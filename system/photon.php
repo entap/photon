@@ -1861,7 +1861,7 @@ function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 
 	// ファイル削除
 	$remove_name = '__remove_' . $name;
-	if (array_get($data, $remove_name) == 'y') {
+	if (array_get($_REQUEST, $remove_name) == 'y') {
 		array_set($data, $name, '');
 	}
 }
