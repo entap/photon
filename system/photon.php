@@ -2356,6 +2356,7 @@ function db_query($query)
 		if (!isset($__photon_log_query)) {
 			$__photon_log_query = TRUE;
 			db_insert($log_query, compact('query'));
+			unset($__photon_log_query);
 		}
 	}
 
@@ -2447,7 +2448,7 @@ function db_primary_key($table)
 				return $__photon_pk[$table] = $column['Field'];
 			}
 		}
-		fatal(config('error_primary_key'));
+		return NULL;
 	}
 }
 
@@ -2584,6 +2585,9 @@ function db_select_at($table, $cond_value, $cond_field = NULL)
 {
 	if ($cond_field === NULL) {
 		$cond_field = db_primary_key($table);
+		if ($cond_field === NULL) {
+			fatal(config('error_primary_key'));
+		}
 	}
 	$query = 'SELECT * FROM `' . db_escape($table);
 	$query .= '` WHERE `' . db_escape($cond_field) . "`='";
@@ -2676,10 +2680,12 @@ function db_insert($table, $data, $id = NULL)
 	$pk = db_primary_key($table);
 	$data['created'] = $data['updated'] = __db_timestamp();
 	$data = db_convert($table, $data);
-	if ($id === NULL) {
-		unset($data[$pk]);
-	} else {
-		$data[$pk] = $id;
+	if ($pk !== NULL) {
+		if ($id === NULL) {
+			unset($data[$pk]);
+		} else {
+			$data[$pk] = $id;
+		}
 	}
 
 	// INSERT文を生成
@@ -2721,7 +2727,9 @@ function db_update($table, $data, $cond)
 	if (count($cond) == 0) {
 		fatal(config('error_invalid_condition'));
 	}
-	unset($data[$pk]);
+	if ($pk !== NULL) {
+		unset($data[$pk]);
+	}
 
 	// UPDATE文を生成
 	$query = 'UPDATE `' . db_escape($table) . '` SET ';
@@ -2753,6 +2761,9 @@ function db_update_at($table, $data, $cond_value, $cond_field = NULL)
 {
 	if ($cond_field === NULL) {
 		$cond_field = db_primary_key($table);
+		if ($cond_field === NULL) {
+			fatal(config('error_primary_key'));
+		}
 	}
 	return db_update($table, $data, array($cond_field => $cond_value));
 }
@@ -2797,6 +2808,9 @@ function db_delete_at($table, $cond_value, $cond_field = NULL)
 {
 	if ($cond_field === NULL) {
 		$cond_field = db_primary_key($table);
+		if ($cond_field === NULL) {
+			fatal(config('error_primary_key'));
+		}
 	}
 	return db_delete($table, array($cond_field => $cond_value));
 }
@@ -3614,7 +3628,7 @@ function auth_realm($realm, $url)
 	// ユーザ識別子を設定
 	$__photon_id = 0;
 	if ($str !== NULL) {
-		list($realm_check, $id, $time, ) = explode(',', $str);
+		list($realm_check, $id, $time, ) = explode('|', $str);
 		if ($realm_check === $realm && is_numeric($id) && is_numeric($time)) {
 			$id = intval($id);
 			$time = intval($time);
@@ -3646,7 +3660,8 @@ function auth_login($id)
 
 	// 暗号化
 	$key = config('secret_key');
-	$str = implode(',', array($__photon_realm, $id, time(), uniqid()));
+	$random = openssl_random_pseudo_bytes(256);
+	$str = implode('|', array($__photon_realm, $id, time(), $random));
 	$str = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
 	$str = base64_encode($str);
 	setcookie($__photon_realm, $str);
