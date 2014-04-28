@@ -1776,6 +1776,8 @@ function form_date($name, $format = NULL, $attributes = NULL)
  * @param	string	$name	対象のフォームの名前
  * @param	string	$key	$_FILESのキーの名前
  * @return	string	アップロードされたファイルの情報
+ * @see		form_upload
+ * @package	form
  */
 function form_get_file($name, $key)
 {
