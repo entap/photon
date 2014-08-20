@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Function db_select_at | entap_photon</title>
+
+	<script type="text/javascript" src="resources/combined.js?3896862520"></script>
+	<script type="text/javascript" src="elementlist.js?2902548645"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Packages</h3>
+			<ul>
+				<li><a href="package-auth.html">auth</a>
+						</li>
+				<li><a href="package-basic.html">basic</a>
+						</li>
+				<li><a href="package-controller.html">controller</a>
+						</li>
+				<li class="active"><a href="package-db.html">db</a>
+						</li>
+				<li><a href="package-form.html">form</a>
+						</li>
+				<li><a href="package-html.html">html</a>
+						</li>
+				<li><a href="package-paginate.html">paginate</a>
+						</li>
+				<li><a href="package-sendmail.html">sendmail</a>
+						</li>
+				<li><a href="package-sql.html">sql</a>
+						</li>
+				<li><a href="package-validate.html">validate</a>
+						</li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+
+
+
+
+
+			<h3>Functions</h3>
+			<ul>
+				<li><a href="function-db_close.html">db_close</a></li>
+				<li><a href="function-db_commit.html">db_commit</a></li>
+				<li><a href="function-db_connect.html">db_connect</a></li>
+				<li><a href="function-db_convert.html">db_convert</a></li>
+				<li><a href="function-db_datetime.html">db_datetime</a></li>
+				<li><a href="function-db_delete.html">db_delete</a></li>
+				<li><a href="function-db_delete_at.html">db_delete_at</a></li>
+				<li><a href="function-db_describe.html">db_describe</a></li>
+				<li><a href="function-db_escape.html">db_escape</a></li>
+				<li><a href="function-db_insert.html">db_insert</a></li>
+				<li><a href="function-db_primary_key.html">db_primary_key</a></li>
+				<li><a href="function-db_query.html">db_query</a></li>
+				<li><a href="function-db_quote_field.html">db_quote_field</a></li>
+				<li><a href="function-db_replace.html">db_replace</a></li>
+				<li><a href="function-db_rollback.html">db_rollback</a></li>
+				<li><a href="function-db_select.html">db_select</a></li>
+				<li class="active"><a href="function-db_select_at.html">db_select_at</a></li>
+				<li><a href="function-db_select_column.html">db_select_column</a></li>
+				<li><a href="function-db_select_options.html">db_select_options</a></li>
+				<li><a href="function-db_select_row.html">db_select_row</a></li>
+				<li><a href="function-db_select_table.html">db_select_table</a></li>
+				<li><a href="function-db_select_value.html">db_select_value</a></li>
+				<li><a href="function-db_start_transaction.html">db_start_transaction</a></li>
+				<li><a href="function-db_update.html">db_update</a></li>
+				<li><a href="function-db_update_at.html">db_update_at</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="package-db.html" title="Summary of db"><span>Package</span></a>
+			</li>
+			<li class="active">
+<span>Function</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="function">
+	<h1>Function db_select_at</h1>
+
+
+	<div class="description">
+	
+<p>条件をフィールド名と値で指定し、レコードを取得する</p>
+
+<p>$cond_fieldが省略された場合、テーブルのプライマリキーを使用する。</p>
+
+	</div>
+
+	<div class="info">
+		
+		<b>Package:</b> <a href="package-db.html">db</a><br />
+		<b>Located at</b> <a href="source-function-db_select_at.html#2616-2639" title="Go to source code">system/photon.php</a><br />
+	</div>
+
+
+	<table class="summary" id="parameters">
+	<caption>Parameters summary</caption>
+	<tr id="$table">
+		<td class="name"><code>string</code></td>
+		<td class="value"><code><var>$table</var></code></td>
+		<td>
+			 テーブル名
+		</td>
+	</tr>
+	<tr id="$cond_value">
+		<td class="name"><code>string</code></td>
+		<td class="value"><code><var>$cond_value</var></code></td>
+		<td>
+			 条件の値
+		</td>
+	</tr>
+	<tr id="$cond_field">
+		<td class="name"><code>string</code></td>
+		<td class="value"><code><var>$cond_field</var> = <span class="php-keyword1">NULL</span></code></td>
+		<td>
+			 条件のフィールド名
+		</td>
+	</tr>
+	</table>
+
+	<table class="summary" id="returns">
+	<caption>Return value summary</caption>
+	<tr>
+		<td class="name"><code>
+			array
+		</code></td>
+		<td>
+			結果のレコード
+		</td>
+	</tr>
+	</table>
+
+
+</div>
+
+	<div id="footer">
+		entap_photon API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
