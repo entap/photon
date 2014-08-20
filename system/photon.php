@@ -2296,11 +2296,11 @@ function db_connect()
 	// 文字コードをutf-8に設定する
 	$db_charset = config('db_charset');
 	if (function_exists('mysql_set_charset')) {
-		if (mysql_set_charset('utf8', $__photon_link) === FALSE) {
+		if (mysql_set_charset($db_charset, $__photon_link) === FALSE) {
 			fatal(config('error_db_charset'));
 		}
 	} else {
-		if (mysql_query("SET NAMES utf8", $__photon_link) === FALSE) {
+		if (mysql_query("SET NAMES " . $db_charset, $__photon_link) === FALSE) {
 			fatal(config('error_db_charset'));
 		}
 	}
@@ -2474,6 +2474,47 @@ function db_convert($table, $data)
 		}
 	}
 	return $return;
+}
+
+/**
+ * トランザクションを開始する
+ * 
+ * @package	db
+ */
+function db_start_transaction()
+{
+	global $__photon_transaction;
+	$__photon_transaction = true;
+	db_query('START TRANSACTION');
+}
+
+/**
+ * コミット処理を行う
+ * 
+ * @package	db
+ */
+function db_commit()
+{
+	global $__photon_transaction;
+	if ($__photon_transaction) {
+		$__photon_transaction = false;
+		db_query('COMMIT');
+	}
+}
+
+/**
+ * ロールバック処理を行う
+ * 
+ * @package	db
+ */
+function db_rollback()
+{
+	global $__photon_link;
+	global $__photon_transaction;
+	if ($__photon_link && $__photon_transaction) {
+		$__photon_transaction = false;
+		db_query('ROLLBACK');
+	}
 }
 
 /**
@@ -3743,6 +3784,9 @@ function redirect($url)
 function fatal($message, $severity = 'fatal')
 {
 	global $__photon_log_error;
+
+	// トランザクションを終了する
+	db_rollback();
 
 	// 出力バッファをクリア
 	ob_end_clean();
