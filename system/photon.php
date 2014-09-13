@@ -1911,7 +1911,7 @@ function form_date_convert(&$data, $name)
  * @param	array	$vars		エラーメッセージの変数に埋め込む連想配列
  * @package	validate
  */
-function form_set_error($name, $message, $vars)
+function form_set_error($name, $message, $vars = array())
 {
 	global $__photon_form_error;
 	$__photon_form_error[$name] = embed($message, $vars);
@@ -1982,7 +1982,7 @@ function form_error($name)
  * @param	array	$rule	ルールの連想配列
  * @package	validate
  */
-function rule($name, $rule)
+function rule($name, $rule = array())
 {
 	global $__photon_form_rule;
 	$__photon_form_rule[$name] = $rule;
