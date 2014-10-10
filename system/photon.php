@@ -1028,8 +1028,8 @@ function e($value, $width = 0, $default = '&nbsp;')
 
 	// 文字幅が設定された場合
 	if ($width != 0) {
-		if (mb_strwidth($value) > $width) {
-			$value = mb_strimwidth($value, 0, $width) . '..';
+		if (mb_strwidth($value, 'utf-8') > $width) {
+			$value = mb_strimwidth($value, 0, $width, '..', 'utf-8');
 		}
 	}
 
@@ -1927,7 +1927,9 @@ function form_set_error($name, $message, $vars = array())
 function form_get_error($name)
 {
 	global $__photon_form_error;
-	if (isset($__photon_form_error[$name])) {
+	if ($name === NULL) {
+		return $__photon_form_error;
+	} else if (isset($__photon_form_error[$name])) {
 		return $__photon_form_error[$name];
 	} else {
 		return NULL;
@@ -2646,7 +2648,7 @@ function db_select_at($table, $cond_value, $cond_field = NULL)
  * @return	array	結果のレコード
  * @package	db
  */
-function db_select($table, $cond)
+function db_select($table, $cond = array())
 {
 	$query = 'SELECT * FROM `' . db_escape($table);
 	$query .= '` WHERE ' . __db_where_assoc($cond);
@@ -2898,6 +2900,21 @@ function db_datetime($timestamp = NULL)
 	return date('Y-m-d H:i:s', $timestamp);
 }
 
+/**
+ * MySQLの日付を生成する
+ * 
+ * @param	string	$timestamp	UNIXタイムスタンプ
+ * @return	string	MySQLの日付文字列
+ * @package	db
+ */
+function db_date($timestamp = NULL)
+{
+	if ($timestamp === NULL) {
+		$timestamp = time();
+	}
+	return date('Y-m-d', $timestamp);
+}
+
 /** @ignore */
 function __db_where_assoc($cond)
 {
@@ -2958,9 +2975,11 @@ function __db_timestamp()
  * 
  * ページネーションの返り値として、下記の連想配列の要素が設定される
  * 
- * |* offset	| 表示開始する行番号
- * |* limit		| 表示する行数
- * |* html		| HTMLタグ
+ * |* offset		| 表示開始する行番号
+ * |* limit			| 表示する行数
+ * |* total_pages	| ページ数
+ * |* total_rows	| 行数
+ * |* html			| HTMLタグ
  * 
  * @param	integer	$total_rows	データ数
  * @param	array	$p			ページネーションの入力値
@@ -3029,6 +3048,10 @@ function paginate($total_rows, $p = NULL)
 	$page_end = min($page_start + $p['num_links'] - 1, $total_pages);
 	$page_start = min($page_start, max(1, $page_end - $p['num_links'] + 1));
 
+	// ページ数と行数を返り値に含める
+	$p['total_pages'] = $total_pages;
+	$p['total_rows'] = $total_rows;
+
 	// HTMLを生成する
 	$html = '';
 	if ($p['page'] != 1) {
@@ -3069,7 +3092,8 @@ function __paginate_tag($page, $url, $tag)
  * 
  * ページネーションの返り値として、下記の連想配列の要素が設定される
  * 
- * |* records		| 取得したレコードの配列
+ * |* records	| 取得したレコードの配列
+ * |* count		| データ数
  * 
  * @param	string	$query	クエリ文
  * @param	array	$p		ページネーションの入力値
@@ -3084,10 +3108,10 @@ function db_paginate($query, $p = NULL)
 	} else {
 		$query_count = 'SELECT COUNT(*) FROM (' . $query . ') AS __db_paginate';
 	}
-	$total_rows = db_select_value($query_count);
+	$p['count'] = db_select_value($query_count);
 
 	// ページネーションのHTMLを生成する
-	$p = paginate($total_rows, $p);
+	$p = paginate($p['count'], $p);
 
 	// レコードを取得する
 	$query .= ' LIMIT ' . $p['offset'] . ',' . $p['limit'];
@@ -3630,6 +3654,8 @@ function sendmail($to, $from, $subject, $message)
 	$message = convert_newline($message);
 
 	// メールの送信
+	mb_language("uni");
+	mb_internal_encoding("utf-8");
 	mb_send_mail($to, $subject, $message, 'From: ' . $from);
 
 	// メール送信履歴に記録
@@ -3853,7 +3879,7 @@ function add_filter($function, $arg = NULL)
  * @see		add_filter
  * @package	controller
  */
-function render($filename, $data = NULL, $return = FALSE)
+function render($filename, $data = array(), $return = FALSE)
 {
 	global $__photon_filter;
 
