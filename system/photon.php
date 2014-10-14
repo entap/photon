@@ -193,7 +193,7 @@ function array_get(&$array, $name)
  * @return	string	相対パスを解決した結果
  * @package	basic
  */
-function relative_path($relative, $base)
+function relative_path($relative, $base = '')
 {
 	// 処理対象のパスを求める
 	if (substr($base, -1) != '/') {
@@ -224,7 +224,7 @@ function relative_path($relative, $base)
 	}
 
 	// 結果のパスを生成
-	if (substr($base, 0, 1) == '/') {
+	if (substr($path, 0, 1) == '/') {
 		return '/' . implode('/', $stack);
 	} else {
 		return str_repeat('../', $depth) . implode('/', $stack);
@@ -1842,7 +1842,7 @@ function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 		}
 
 		// アップロード先のファイル名
-		$filename = md5_file($tmp_name) . '.' . $src_ext;
+		$filename = md5_file($tmp_name) . '.' . $ext;
 		$dest_path = $dest_dir . $filename;
 		$value = $dir . '/' . $filename;
 
