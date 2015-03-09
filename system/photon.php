@@ -31,8 +31,8 @@
 //	http://entap.github.com/photon
 //
 
-require_once 'photon_config.php';
-require_once 'config.php';
+require_once dirname(__FILE__) . '/photon_config.php';
+require_once dirname(__FILE__) . '/config.php';
 
 //------------------------------------------------------------------------------
 // 基本関数
@@ -3695,11 +3695,10 @@ function auth_realm($realm, $url)
 	}
 
 	// ユーザ識別子を設定
-	$__photon_id = 0;
+	$__photon_id = '';
 	if ($str !== NULL) {
-		list($realm_check, $id, $time, ) = explode('|', $str);
-		if ($realm_check === $realm && is_numeric($id) && is_numeric($time)) {
-			$id = intval($id);
+		list($realm_check, $id, $time, ) = unserialize($str);
+		if ($realm_check === $realm && is_numeric($time)) {
 			$time = intval($time);
 			$expire = $time + config('auth_expire');
 			if (time() < $expire) {
@@ -3730,7 +3729,7 @@ function auth_login($id)
 	// 暗号化
 	$key = config('secret_key');
 	$random = openssl_random_pseudo_bytes(256);
-	$str = implode('|', array($__photon_realm, $id, time(), $random));
+	$str = serialize(array($__photon_realm, $id, time(), $random));
 	$str = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
 	$str = base64_encode($str);
 	setcookie($__photon_realm, $str);
@@ -3743,7 +3742,7 @@ function auth_login($id)
  */
 function auth_logout()
 {
-	auth_login(0);
+	auth_login('');
 }
 
 /**
@@ -3757,8 +3756,9 @@ function auth_logout()
 function auth_require()
 {
 	global $__photon_url;
-	if (auth_id() == 0) {
+	if (auth_id() === '') {
 		redirect($__photon_url);
+		exit;
 	}
 }
 
