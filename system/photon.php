@@ -2524,7 +2524,7 @@ function db_rollback()
  * 
  * @param	string	$query		クエリ文
  * @param	string	$key_field	レコードのキーとするフィールド名
- * @return	array	結果のレコードの配列
+ * @return	array	結果のレコードの配列 (結果が空の場合、空配列)
  * @package	db
  */
 function db_select_table($query, $key_field = NULL)
@@ -2547,7 +2547,7 @@ function db_select_table($query, $key_field = NULL)
  * 
  * @param	string	$query		クエリ文
  * @param	string	$row_number	取得する行番号
- * @return	array	結果のレコード
+ * @return	array	結果のレコード (結果が空の場合、FALSE)
  * @package	db
  */
 function db_select_row($query, $row_number = 0)
@@ -2567,7 +2567,7 @@ function db_select_row($query, $row_number = 0)
  * @param	string	$query			クエリ文
  * @param	string	$value_field	値として取得するフィールド名
  * @param	string	$key_field		キーとして取得するフィールド名
- * @return	array	結果の連想配列
+ * @return	array	結果の連想配列 (結果が空の場合、空配列)
  * @package	db
  */
 function db_select_column($query, $value_field = NULL, $key_field = NULL)
@@ -2596,7 +2596,7 @@ function db_select_column($query, $value_field = NULL, $key_field = NULL)
  * @param	string	$query			クエリ文
  * @param	string	$value_field	値として取得するフィールド名
  * @param	string	$row_number		取得する行番号
- * @return	string	取得結果の値
+ * @return	string	取得結果の値 (結果が空の場合、FALSE)
  * @package	db
  */
 function db_select_value($query, $value_field = NULL, $row_number = 0)
@@ -2606,7 +2606,9 @@ function db_select_value($query, $value_field = NULL, $row_number = 0)
 		mysql_data_seek($result, $row_number);
 	}
 	$row = mysql_fetch_assoc($result);
-	if ($value_field === NULL) {
+	if ($row === FALSE) {
+		$return = FALSE;
+	} else if ($value_field === NULL) {
 		$return = current($row);
 	} else {
 		$return = $row[$value_field];
@@ -2734,15 +2736,7 @@ function db_insert($table, $data, $id = NULL)
 	}
 
 	// INSERT文を生成
-	$query_field = $query_value = '';
-	foreach ($data as $field => $value) {
-		$query_field .= '`' . db_escape($field) . '`,';
-		$query_value .= "'" . db_escape($value) . "',";
-	}
-	$query_field = rtrim($query_field, ',');
-	$query_value = rtrim($query_value, ',');
-	$query = 'INSERT INTO `' . db_escape($table) . '` (';
-	$query .= $query_field . ') VALUES (' . $query_value . ')';
+	$query = __db_insert($table, $data);
 
 	// クエリを実行
 	db_query($query);
@@ -2863,8 +2857,8 @@ function db_delete_at($table, $cond_value, $cond_field = NULL)
 /**
  * テーブルを挿入・更新する
  * 
- * $dataにプライマリキーが指定されている場合には更新処理を行う。
- * そうでない場合には挿入処理を行う。
+ * $dataのプライマリキーの値が重複していない場合、挿入処理を行う。
+ * 重複している場合、更新処理を行う。
  * 
  * updatedが現在の日時に設定される。
  * 
@@ -2875,14 +2869,28 @@ function db_delete_at($table, $cond_value, $cond_field = NULL)
  */
 function db_replace($table, $data)
 {
+	// データの準備
 	$pk = db_primary_key($table);
+	$data['created'] = $data['updated'] = __db_timestamp();
+	$data = db_convert($table, $data);
+
+	// INSERT ON DUPLICATE KEY UPDATE文を生成
+	$query = __db_insert($table, $data);
 	if (isset($data[$pk])) {
-		$id = $data[$pk];
-		db_update_at($table, $data, $id);
-		return $id;
-	} else {
-		return db_insert($table, $data);
+		$query .= ' ON DUPLICATE KEY UPDATE ';
+		unset($data[$pk]);
+		unset($data['created']);
+		foreach ($data as $field => $value) {
+			$query .= db_quote_field($field) . "='" . db_escape($value) . "',";
+		}
+		$query = rtrim($query, ',');
 	}
+
+	// クエリを実行
+	db_query($query);
+
+	// 生成したIDを返す
+	return mysql_insert_id(db_connect());
 }
 
 /**
@@ -2923,6 +2931,21 @@ function __db_where_assoc($cond)
 		$query .= ' AND `' . db_escape($field);
 		$query .= "`='" . db_escape($value) . "'";
 	}
+	return $query;
+}
+
+/** @ignore */
+function __db_insert($table, $data)
+{
+	$query_field = $query_value = '';
+	foreach ($data as $field => $value) {
+		$query_field .= '`' . db_escape($field) . '`,';
+		$query_value .= "'" . db_escape($value) . "',";
+	}
+	$query_field = rtrim($query_field, ',');
+	$query_value = rtrim($query_value, ',');
+	$query = 'INSERT INTO `' . db_escape($table) . '` (';
+	$query .= $query_field . ') VALUES (' . $query_value . ')';
 	return $query;
 }
 
