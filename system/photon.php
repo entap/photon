@@ -1998,6 +1998,7 @@ function rule($name, $rule = array())
  * |* kana |mb_convert_kanaの引数、変換しない場合はNULL。
  * |* trim |トリミングするならy。デフォルトはy
  * |* case |大文字にするならupper、小文字にするならlower、変換しない場合はNULL
+ * |* default |入力データが空の場合のデフォルト値
  * 
  * @param	array	$data	フィルタ処理を行う連想配列
  * @return	array	フィルタ処理の結果の連想配列
@@ -2024,6 +2025,13 @@ function __filter($value, $rule)
 			$value[$k] = __filter($v, $rule);
 		}
 		return $value;
+	}
+
+	// 入力データが空の場合の処理
+	if (isset($rule['default'])) {
+		if ($value === '' || $value === NULL) {
+			$value = $rule['default'];
+		}
 	}
 
 	// 多バイト文字の変換
@@ -2877,13 +2885,18 @@ function db_replace($table, $data)
 	// INSERT ON DUPLICATE KEY UPDATE文を生成
 	$query = __db_insert($table, $data);
 	if (isset($data[$pk])) {
-		$query .= ' ON DUPLICATE KEY UPDATE ';
 		unset($data[$pk]);
 		unset($data['created']);
-		foreach ($data as $field => $value) {
-			$query .= db_quote_field($field) . "='" . db_escape($value) . "',";
+		if (count($data) == 0) {
+			$query = 'INSERT IGNORE' . substr($query, 6);
+		} else {
+			$query .= ' ON DUPLICATE KEY UPDATE ';
+			foreach ($data as $field => $value) {
+				$query .= db_quote_field($field) . "='";
+				$query .= db_escape($value) . "',";
+			}
+			$query = rtrim($query, ',');
 		}
-		$query = rtrim($query, ',');
 	}
 
 	// クエリを実行
