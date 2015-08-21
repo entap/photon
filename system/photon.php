@@ -4101,7 +4101,7 @@ function execute($action = NULL, $data = NULL)
 function __photon_init()
 {
 	// PHPのバージョンを調べる
-	if (version_compare(PHP_VERSION, '4.4', '<=')) {
+	if (version_compare(PHP_VERSION, '4.4', '<')) {
 		die('This application requires at least PHP version 4.4');
 	}
 
@@ -4113,7 +4113,7 @@ function __photon_init()
 	}
 
 	// secret_keyが設定されているか調べる
-	if (config('secret_key') == '') {
+	if (config('secret_key') == 'SECRET_KEY') {
 		die('The configuration file now needs a secret passphrase');
 	}
 
