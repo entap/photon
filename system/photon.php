@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014, Entap,Inc.
+ * Copyright (c) 2015, Entap,Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -882,8 +882,14 @@ function tag_checkbox($name, $value, $label, $checked, $attributes = NULL)
 /**
  * &lt;select&gt;タグを生成する
  * 
+ * 選択肢は、下記の要素から構成されたテーブル型配列を指定する。
+ * 
+ * | label | 選択肢の表示名
+ * | value | 選択肢の値
+ * | group | 選択肢のグループ名
+ * 
  * @param	string	$name		name属性の値
- * @param	string	$options	選択肢の連想配列
+ * @param	string	$options	選択肢
  * @param	string	$selected	選択中の値
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -906,14 +912,25 @@ function tag_select($name, $options, $selected, $attributes = NULL)
 	$selected = strval($selected);
 	$str = tag_open('select', $attributes);
 	$str .= $blank;
-	foreach ($options as $value => $label) {
-		$option = array('value' => $value);
-		if (strval($value) == $selected) {
-			$option['selected'] = 'selected';
+	$current_group = NULL;
+	foreach ($options as $option) {
+		if (isset($option['group']) && $current_group !== $option['group']) {
+			if ($current_group !== NULL) {
+				$str .= tag_close('optgroup');
+			}
+			$str .= tag_open('optgroup', array('label' => $option['group']));
+			$current_group = $option['group'];
 		}
-		$str .= tag_open('option', $option);
-		$str .= htmlspecialchars($label);
+		$options_attributes = array('value' => $option['value']);
+		if (strval($value) == $selected) {
+			$options_attributes['selected'] = 'selected';
+		}
+		$str .= tag_open('option', $options_attributes);
+		$str .= htmlspecialchars($option['label']);
 		$str .= tag_close('option');
+	}
+	if ($current_group !== NULL) {
+		$str .= tag_close('optgroup');
 	}
 	$str .= tag_close('select');
 	return $str;
@@ -1585,6 +1602,31 @@ function form_checkbox_array($name, $array, $attributes = NULL)
 }
 
 /**
+ * テーブル型配列から選択するドロップダウンを生成する
+ * 
+ * 選択肢は、下記の要素から構成されたテーブル型配列を指定する。
+ * 
+ * | label | 選択肢の表示名
+ * | value | 選択肢の値
+ * | group | 選択肢のグループ名
+ * 
+ * @param	string	$name		対象のフォームの名前
+ * @param	array	$options	選択肢
+ * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
+ * @return	string	生成したHTMLタグ
+ * @package	form
+ */
+function form_select($name, $options, $attributes = NULL)
+{
+	if (form_get_static($name)) {
+		return form_static_assoc($name, $options);
+	} else {
+		$selected = form_get_value($name);
+		return tag_select($name, $options, $selected, $attributes);
+	}
+}
+
+/**
  * 連想配列から選択するドロップダウンを生成する
  * 
  * $optionsは、選択時の値=>選択肢の文字列とした連想配列を指定する。
@@ -1601,7 +1643,10 @@ function form_select_assoc($name, $options, $attributes = NULL)
 	if (form_get_static($name)) {
 		return form_static_assoc($name, $options);
 	} else {
-		$options = form_get_options($options);
+		$options = array();
+		foreach (form_get_options($options) as $value => $label) {
+			$options[] = array('value' => $value, 'label' => $label);
+		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
 	}
@@ -1625,7 +1670,7 @@ function form_select_array($name, $array, $attributes = NULL)
 	} else {
 		$options = array();
 		foreach ($array as $value) {
-			$options[$value] = $value;
+			$options[] = array('value' => $value, 'label' => $value);
 		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
@@ -1649,7 +1694,7 @@ function form_select_number($name, $min, $max, $attributes = NULL)
 	} else {
 		$options = array();
 		for ($value = $min; $value <= $max; $value++) {
-			$options[$value] = $value;
+			$options[] = array('value' => $value, 'label' => $value);
 		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
@@ -2037,7 +2082,7 @@ function __filter($value, $rule)
 	// 多バイト文字の変換
 	$kana = isset($rule['kana']) ? $rule['kana'] : 'saKV';
 	if ($kana !== '') {
-		$value = mb_convert_kana($value, $kana);
+		$value = mb_convert_kana($value, $kana, 'utf-8');
 	}
 
 	// 両端の空白を除去する
