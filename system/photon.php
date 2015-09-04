@@ -266,7 +266,7 @@ function build_url($url_parsed)
 
 	// ホスト名
 	if (isset($url_parsed['host'])) {
-		$url .= $url_parsed['host'];
+		$url .= strtok($url_parsed['host'], ':');
 		if (isset($url_parsed['port'])) {
 			$url .= ':' . $url_parsed['port'];
 		}
