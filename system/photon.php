@@ -3,17 +3,17 @@
 /*
  * Copyright (c) 2015, Entap,Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,12 +40,12 @@ require_once dirname(__FILE__) . '/config.php';
 
 /**
  * 入力に対するデフォルト値の処理を行う
- * 
+ *
  * $valueが空文字列・NULLでない場合には$valueを返す。
  * そうでない場合にはデフォルト値を返す。
- * 
+ *
  * 複数引数を指定した場合、空文字列・NULLではない先頭の引数の値を返す。
- * 
+ *
  * @param	string	$value		入力値
  * @param	string	$default	デフォルト値
  * @return	string	デフォルト値の処理の結果
@@ -63,11 +63,11 @@ function default_value($value, $default)
 
 /**
  * 入力値の値の範囲を制限する
- * 
+ *
  * $valueが$minより小さい場合には$minを返す。
  * $valueが$maxより大きい場合には$maxを返す。
  * $valueが$min以上$max以下の範囲内の場合には$valueを返す。
- * 
+ *
  * @param	integer	$value	入力値
  * @param	integer	$min	下限値
  * @param	integer	$max	上限値
@@ -87,11 +87,11 @@ function limit_range($value, $min, $max)
 
 /**
  * 節の処理を行う
- * 
+ *
  * $bodyが空文字列・NULLでない場合には、
  * $prefix.$body.$suffixを連結した文字列を返す。
  * そうでない場合には空文字列を返す。
- * 
+ *
  * @param	string	$body	入力文字列
  * @param	string	$prefix	接頭辞
  * @param	string	$suffix	接尾辞
@@ -109,13 +109,13 @@ function clause($body, $prefix, $suffix)
 
 /**
  * 多次元連想配列の要素をパス形式で指定して、値を設定する
- * 
+ *
  * パス形式とは、要素を辿るためのキーを並べた形式である。
  * 例えば、下記はいずれも$array['key1']['key2']['key3']の指定となる。
  * - array('key1', 'key2', 'key3')
  * - 'key1[key2][key3]'
  * - 'key1.key2.key3'
- * 
+ *
  * @param	array	$array	対象の多次元連想配列
  * @param	mixed	$name	要素を指定する文字列
  * @param	mixed	$value	設定する値
@@ -144,13 +144,13 @@ function array_set(&$array, $name, $value)
 
 /**
  * 多次元連想配列の要素をパス形式で指定して、値を取得する
- * 
+ *
  * パス形式とは、要素を辿るためのキーを並べた形式である。
  * 例えば、下記はいずれも$array['key1']['key2']['key3']の指定となる。
  * - array('key1', 'key2', 'key3')
  * - 'key1[key2][key3]'
  * - 'key1.key2.key3'
- * 
+ *
  * @param	array	$array	対象の多次元連想配列
  * @param	mixed	$name	要素を指定する文字列
  * @return	mixed	取得した値
@@ -179,15 +179,15 @@ function array_get(&$array, $name)
 
 /**
  * 相対パスを解決する
- * 
+ *
  * $baseを基準パスとして、$relativeの相対パス指定を解決する。
  * 相対パス指定として、親ディレクトリ..や現在ディレクトリ.が使用できる。
- * 
+ *
  * $relativeが/で始まる場合、絶対パスが指定されたとみなし、
  * $baseは無視される。
- * 
+ *
  * $baseにファイル名が指定された場合、ファイルの親ディレクトリが基準パスとなる。
- * 
+ *
  * @param	string	$relative	相対パス
  * @param	string	$base		基準パス
  * @return	string	相対パスを解決した結果
@@ -233,7 +233,7 @@ function relative_path($relative, $base = '')
 
 /**
  * URLの構成要素からURLを表す文字列を生成する
- * 
+ *
  * @param	array	$url_parsed	URLの構成要素
  * @return	string	URLを表す文字列
  * @package	basic
@@ -266,7 +266,7 @@ function build_url($url_parsed)
 
 	// ホスト名
 	if (isset($url_parsed['host'])) {
-		$url .= strtok($url_parsed['host'], ':');
+		$url .= $url_parsed['host'];
 		if (isset($url_parsed['port'])) {
 			$url .= ':' . $url_parsed['port'];
 		}
@@ -293,7 +293,7 @@ function build_url($url_parsed)
 
 /**
  * URLのクエリ文字列を連想配列から生成する
- * 
+ *
  * @param	array	$data	URLのクエリを表す連想配列
  * @param	string	$prefix	クエリデータの接頭辞
  * @return	string	URLのクエリ文字列
@@ -319,10 +319,10 @@ function build_url_query($data, $prefix = NULL)
 
 /**
  * 相対URLを解決する
- * 
+ *
  * $baseを基準URLとして、$relativeの相対URL指定を解決する。
  * $relativeにはparse_urlでパースできるURLが使用できる。
- * 
+ *
  * @param	string	$relative	相対URL
  * @param	string	$base		基準URL
  * @return	string	相対URLを解決した結果
@@ -374,7 +374,7 @@ function relative_url($relative, $base)
 
 /**
  * URLのクエリをマージする
- * 
+ *
  * @param	string	$url	元のURL
  * @param	mixed	$query	マージするクエリの文字列、または連想配列
  * @return	string	生成したURLを表す文字列
@@ -406,7 +406,7 @@ function modify_url_query($url, $query)
 
 /**
  * 現在のリクエストURLを取得する
- * 
+ *
  * @return	string	現在のリクエストURLを表す文字列
  * @package	basic
  */
@@ -423,7 +423,7 @@ function get_request_url()
 
 	// ホスト名
 	if (isset($_SERVER['HTTP_HOST'])) {
-		$url .= $_SERVER['HTTP_HOST'];
+		$url .= strtok($_SERVER['HTTP_HOST'], ':');
 	} elseif (isset($_SERVER['SERVER_NAME'])) {
 		$url .= $_SERVER['SERVER_NAME'];
 	} elseif (isset($_SERVER['SERVER_ADDR'])) {
@@ -453,7 +453,7 @@ function get_request_url()
 
 /**
  * 現在のリクエストがPOSTかを調べる
- * 
+ *
  * @return	boolean	現在のリクエストがPOSTならTRUE、そうでない場合にはFALSE
  * @package	basic
  */
@@ -464,10 +464,10 @@ function is_request_post()
 
 /**
  * 変数の真偽値を調べる
- * 
+ *
  * $varが真偽値のTRUE、または文字列のyes、y、true、tである場合にはTRUE、
  * そうでない場合にはFALSEを返す。
- * 
+ *
  * @param	mixed	$var	対象の変数
  * @return	boolean	$varの真偽値
  * @package	basic
@@ -486,7 +486,7 @@ function is_true($var)
 
 /**
  * 文字列がメールアドレスとして正しいか調べる
- * 
+ *
  * @param	string	$str	対象の文字列
  * @return	boolean	文字列がメールアドレスとして正しい場合にはTRUE。
  * 					そうでない場合にはFALSE
@@ -499,7 +499,7 @@ function is_mail($str)
 
 /**
  * 文字列がIPv4アドレスとして正しいか調べる
- * 
+ *
  * @param	string	$str	対象の文字列
  * @return	boolean	文字列がIPv4アドレスとして正しい場合にはTRUE。
  * 					そうでない場合にはFALSE
@@ -511,12 +511,36 @@ function is_ipv4($str)
 }
 
 /**
+ * 文字列がひらがなか調べる
+ *
+ * @param	string	$str	対象の文字列
+ * @return	boolean	ひらがなならTRUE。そうでない場合にはFALSE
+ * @package	basic
+ */
+function is_hiragana($str)
+{
+	return preg_match("/^[ぁ-ん]+$/u", $str);
+}
+
+/**
+ * 文字列がカタカナか調べる
+ *
+ * @param	string	$str	対象の文字列
+ * @return	boolean	ひらがなならTRUE。そうでない場合にはFALSE
+ * @package	basic
+ */
+function is_katakana($str)
+{
+	return preg_match("/^[ァ-ヶー]+$/u", $str);
+}
+
+/**
  * テンプレート文字列に変数を埋め込む
- * 
+ *
  * テンプレート文字列には{key1.key2}の形式で変数を指定でき、
  * $vars[$key1][$key]の値で置換される。
  * $filterを指定した場合、$filterが変換関数として使用される。
- * 
+ *
  * @param	string	$template	テンプレート文字列
  * @param	array	$vars		変数の連想配列
  * @param	string	$filter		フィルタ関数
@@ -547,7 +571,7 @@ function __embed($matches)
 
 /**
  * 文字列の改行コードを置換する
- * 
+ *
  * @param	string	$str		対象の文字列
  * @param	string	$newline	改行コード
  * @return	string	改行コードを置換した結果
@@ -565,7 +589,7 @@ function convert_newline($str, $newline = "\n")
 
 /**
  * ファイルの拡張子を取得する
- * 
+ *
  * @param	string	$filename	ファイル名
  * @return	string	ファイルの拡張子
  * @package	basic
@@ -582,7 +606,7 @@ function extension($filename)
 
 /**
  * アンダースコアで区切った文字列をキャメルケースの文字列に変換する
- * 
+ *
  * @param	string	$str		アンダースコアで区切った文字列
  * @param	string	$lcfirst	先頭の文字を小文字にするか？
  * @return	string	キャメルケースの文字列
@@ -599,7 +623,7 @@ function camelize($str, $lcfirst = true)
 
 /**
  * キャメルケースの文字列をアンダースコアで区切った文字列に変換する
- * 
+ *
  * @param	string	$str	キャメルケースの文字列
  * @return	string	アンダースコアで区切った文字列
  * @package	basic
@@ -611,7 +635,7 @@ function underscore($str)
 
 /**
  * 配列の全要素のキーに対して、ユーザ関数を適用する
- * 
+ *
  * @param	array		$array		対象の配列
  * @param	callable	$callback	キーに対して適用するユーザ関数
  * @param	mixed		$userdata	ユーザ関数の引数
@@ -633,10 +657,25 @@ function array_change_key($array, $callback, $userdata = NULL)
 }
 
 /**
+ * 乱数文字列を生成する
+ *
+ * @param	integer	$n	文字数
+ * @return	string	乱数文字列
+ * @package	basic
+ */
+function random_str($n)
+{
+	$str = base64_encode(openssl_random_pseudo_bytes(ceil($n * 6 / 8)));
+	$str = str_replace(array('+', '/'), array('-', '_'), $str);
+	$str = substr($str, 0, $n);
+	return $str;
+}
+
+/**
  * 設定オプションの値を設定する
- * 
+ *
  * 引数を一つだけ指定した場合には、設定オプションの値を取得する
- * 
+ *
  * @param	string	$name	設定オプションの名前
  * @param	string	$value	設定オプションの値
  * @return	string	取得した設定オプションの値
@@ -662,7 +701,7 @@ function config($name, $value = NULL)
 
 /**
  * HTML開始タグを生成する
- * 
+ *
  * @param	string	$name		タグの名前
  * @param	mixed	$attributes	タグの属性の文字列、または連想配列
  * @param	boolean	$is_empty	空タグの場合にはTRUE、そうでない場合にはFALSE
@@ -685,7 +724,7 @@ function tag_open($name, $attributes = NULL, $is_empty = FALSE)
 
 /**
  * HTML終了タグを生成する
- * 
+ *
  * @param	string	$name		タグの名前
  * @return	string	生成した終了タグ
  * @package	html
@@ -697,10 +736,10 @@ function tag_close($name)
 
 /**
  * HTMLタグの属性文字列をパースする
- * 
+ *
  * 例えば、$strに文字列'key1="value1" key2="value2"'を指定した場合、
  * array('key1'=>'value1', 'key2'=>'value2')を返す。
- * 
+ *
  * @param	string	$str	タグの属性の文字列
  * @return	array	タグの属性の連想配列
  * @package	html
@@ -746,10 +785,10 @@ function tag_parse_attributes($str)
 
 /**
  * HTMLタグの属性文字列を生成する
- * 
+ *
  * 例えば、$arrayに連想配列array('key1'=>'value1', 'key2'=>'value2')を
  * 指定した場合、文字列'key1="value1" key2="value2"'を返す。
- * 
+ *
  * @param	array	$array	タグの属性の連想配列
  * @return	string	タグの属性の文字列
  * @package	html
@@ -772,7 +811,7 @@ function tag_build_attributes($array)
 
 /**
  * &lt;input&gt;タグを生成する
- * 
+ *
  * @param	string	$type		type属性の値
  * @param	string	$name		name属性の値
  * @param	string	$value		value属性の値
@@ -797,7 +836,7 @@ function tag_input($type, $name, $value, $attributes = NULL)
 
 /**
  * &lt;input type="hidden"&gt;タグを生成する
- * 
+ *
  * @param	string	$data	出力するデータを表す連想配列
  * @param	string	$prefix	フォームの名前の接頭辞
  * @return	string	生成したHTMLタグ
@@ -826,7 +865,7 @@ function tag_hidden($data, $prefix = NULL)
 
 /**
  * &lt;input type="radio"&gt;タグを生成する
- * 
+ *
  * @param	string	$name		name属性の値
  * @param	string	$value		value属性の値
  * @param	string	$label		ラベル文字列
@@ -861,7 +900,7 @@ function tag_radio($name, $value, $label, $checked, $attributes = NULL)
 
 /**
  * &lt;input type="checkbox"&gt;タグを生成する
- * 
+ *
  * @param	string	$name		name属性の値
  * @param	string	$value		value属性の値
  * @param	string	$label		ラベル文字列
@@ -881,13 +920,13 @@ function tag_checkbox($name, $value, $label, $checked, $attributes = NULL)
 
 /**
  * &lt;select&gt;タグを生成する
- * 
+ *
  * 選択肢は、下記の要素から構成されたテーブル型配列を指定する。
- * 
+ *
  * | label | 選択肢の表示名
  * | value | 選択肢の値
  * | group | 選択肢のグループ名
- * 
+ *
  * @param	string	$name		name属性の値
  * @param	string	$options	選択肢
  * @param	string	$selected	選択中の値
@@ -922,7 +961,7 @@ function tag_select($name, $options, $selected, $attributes = NULL)
 			$current_group = $option['group'];
 		}
 		$options_attributes = array('value' => $option['value']);
-		if (strval($value) == $selected) {
+		if (strval($option['value']) == $selected) {
 			$options_attributes['selected'] = 'selected';
 		}
 		$str .= tag_open('option', $options_attributes);
@@ -938,7 +977,7 @@ function tag_select($name, $options, $selected, $attributes = NULL)
 
 /**
  * &lt;textarea&gt;タグを生成する
- * 
+ *
  * @param	string	$name		name属性の値
  * @param	string	$value		textareaに入力済みの値
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -959,7 +998,7 @@ function tag_textarea($name, $value, $attributes = NULL)
 
 /**
  * &lt;img&gt;タグを生成する
- * 
+ *
  * @param	string	$src		src属性の値
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -976,7 +1015,7 @@ function tag_img($src, $attributes = NULL)
 
 /**
  * &lt;a href=""&gt;タグを生成する
- * 
+ *
  * @param	string	$href		href属性の値
  * @param	string	$text		リンクに指定したいテキスト
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -997,9 +1036,9 @@ function tag_a($href, $text = NULL, $attributes = NULL)
 
 /**
  * 段落タグを生成する
- * 
+ *
  * 改行コードをpタグに変換する
- * 
+ *
  * @param	string	$str		テキスト
  * @return	string	生成したHTMLタグ
  * @package	html
@@ -1013,16 +1052,16 @@ function tag_p($str)
 
 /**
  * 文字列または数値を出力する
- * 
+ *
  * $valueが文字列の場合には、改行コードを&lt;br /&gt;に置換、
  * HTMLエスケープして出力する。
- * 
+ *
  * $valueが数値の場合には、カンマ区切りで出力する。
- * 
+ *
  * 文字幅が$widthより長い場合には、文字幅を制限して出力する。
- * 
+ *
  * $valueが空文字列かNULLの場合には$defaultを出力する。
- * 
+ *
  * @param	mixed	$value		出力する文字列または数値
  * @param	integer	$width		最大幅
  * @param	string	$default	デフォルトで出力する値
@@ -1060,7 +1099,7 @@ function e($value, $width = 0, $default = '&nbsp;')
 
 /**
  * フォームの入力値を設定する
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前、全て設定する場合にはNULL
  * @param	mixed	$value	フォームの入力値
  * @package	form
@@ -1076,7 +1115,7 @@ function form_set_value($name, $value)
 
 /**
  * フォームの入力値を取得する
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前、全て取得する場合にはNULL
  * @return	mixed	フォームの入力値
  * @package	form
@@ -1092,7 +1131,7 @@ function form_get_value($name)
 
 /**
  * フォームの入力値に指定した値が含まれているか調べる
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前、全て設定する場合にはNULL
  * @param	string	$check	含まれているか調べる値
  * @return	boolean	入力値に指定した値が含まれている場合にはTRUE、
@@ -1112,7 +1151,7 @@ function form_check_value($name, $check)
 
 /**
  * フォームの選択肢を設定する
- * 
+ *
  * @param	string	$name		選択肢の名前
  * @param	array	$options	選択肢の連想配列
  * @package	form
@@ -1125,11 +1164,11 @@ function form_set_options($name, $options)
 
 /**
  * フォームの選択肢を取得する
- * 
+ *
  * form_set_optionsで選択肢が設定されている場合には、その値を返す。
  * また、(選択肢の名前)_get_optionsという名前の関数が存在する場合には、
  * その返り値を選択肢として返す。
- * 
+ *
  * @param	string	$name		選択肢の名前
  * @return	array	選択肢の連想配列
  * @package	form
@@ -1156,9 +1195,9 @@ function form_get_options($name)
 
 /**
  * フォームを読込専用に設定する
- * 
+ *
  * $nameをNULLに設定した場合、個別に設定しないフォームの状態を設定する。
- * 
+ *
  * @param	mixed	$name		対象のフォームの名前、全て設定する場合にはNULL
  * @param	boolean	$is_static	読込専用ならTRUE、そうでない場合にはFALSE
  * @package	form
@@ -1176,7 +1215,7 @@ function form_set_static($name = NULL, $is_static = TRUE)
 
 /**
  * フォームが読込専用か調べる
- * 
+ *
  * @param	mixed	$name		対象のフォームの名前
  * @return	boolean	$is_static	読込専用ならTRUE、そうでない場合にはFALSE
  * @package	form
@@ -1194,7 +1233,7 @@ function form_get_static($name)
 
 /**
  * フォームの開始タグを生成する
- * 
+ *
  * @param	string	$action		action属性の値
  * @param	string	$method		method属性の値
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1214,7 +1253,7 @@ function form_open($action, $method = 'post', $attributes = NULL)
 
 /**
  * アップロードを伴うフォームの開始タグを生成する
- * 
+ *
  * @param	string	$action		action属性の値
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -1230,7 +1269,7 @@ function form_open_multipart($action, $attributes = NULL)
 
 /**
  * フォームの終了タグを生成する
- * 
+ *
  * @return	string	生成したHTMLタグ
  * @package	form
  */
@@ -1241,7 +1280,7 @@ function form_close()
 
 /**
  * 読込専用のテキスト入力フォームを生成する
- * 
+ *
  * 下記のように入力値と表示する値が同じ場合で使用する。
  * - form_text
  * - form_textarea
@@ -1249,14 +1288,14 @@ function form_close()
  * - form_checkbox_array
  * - form_select_array
  * - form_select_number
- * 
+ *
  * 入力値が単一の値の場合には、HTMLエスケープ、改行コードを&lt;br /&gt;に
  * 変換して返す。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* static_glue	| 入力値が配列の場合に結合する文字列
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前
  * @return	string	生成したHTMLタグ
  * @package	form
@@ -1272,18 +1311,18 @@ function form_static($name)
 
 /**
  * 読込専用の選択肢フォームを生成する
- * 
+ *
  * 下記のように連想配列から選択する場合で使用する。
  * - form_radio_assoc
  * - form_checkbox_assoc
  * - form_select_assoc
- * 
+ *
  * 入力値が単一の値の場合には、連想配列でルックアップして返す。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* static_glue	| 入力値が配列の場合に結合する文字列
- * 
+ *
  * @param	mixed	$name		対象のフォームの名前
  * @param	mixed	$options	選択肢の連想配列、または選択肢の名前
  * @return	string	生成したHTMLタグ
@@ -1307,14 +1346,14 @@ function form_static_assoc($name, $options)
 
 /**
  * 読込専用のパスワード入力フォームを生成する
- * 
+ *
  * form_passwordのように入力値を出力できない場合で使用する。
  * 隠し文字を入力値の文字数だけ繰り返す。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* static_hidden	| パスワードの隠し文字
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前
  * @return	string	生成したHTMLタグ
  * @package	form
@@ -1327,16 +1366,16 @@ function form_static_password($name)
 
 /**
  * 読込専用の真偽値フォームを生成する
- * 
+ *
  * 下記のように真偽値を選択する場合で使用する。
  * - form_radio
  * - form_checkbox
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* static_true	| 真の値の場合の文字列
  * |* static_false	| 偽の値の場合の文字列
- * 
+ *
  * @param	mixed	$name	対象のフォームの名前
  * @param	mixed	$check	選択時の値
  * @return	string	生成したHTMLタグ
@@ -1353,7 +1392,7 @@ function form_static_boolean($name, $check)
 
 /**
  * 単一行テキスト入力フォームを生成する
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -1370,7 +1409,7 @@ function form_text($name, $attributes = NULL)
 
 /**
  * パスワード入力フォームを生成する
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -1387,7 +1426,7 @@ function form_password($name, $attributes = NULL)
 
 /**
  * ファイル入力フォームを生成する
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -1404,7 +1443,7 @@ function form_file($name, $attributes = NULL)
 
 /**
  * 隠しフォームを生成する
- * 
+ *
  * @param	mixed	$names	対象のフォームの名前、またはフォームの名前の連想配列
  * @return	string	生成したHTMLタグ
  * @package	form
@@ -1428,7 +1467,7 @@ function form_hidden($names)
 
 /**
  * 複数行テキスト入力フォームを生成する
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
@@ -1445,9 +1484,9 @@ function form_textarea($name, $attributes = NULL)
 
 /**
  * ラジオボタンを生成する
- * 
+ *
  * $labelにNULL以外の値を指定した場合、&lt;label&gt;タグによるラベルも生成する。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	string	$value		選択時の値
  * @param	string	$label		ラベルの文字列
@@ -1467,10 +1506,10 @@ function form_radio($name, $value, $label = NULL, $attributes = NULL)
 
 /**
  * 連想配列から選択するラジオボタンを生成する
- * 
+ *
  * $optionsは、選択時の値=>選択肢の文字列とした連想配列を指定する。
  * form_set_optionsで設定した選択肢の名前を指定することもできる。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$options	選択肢の連想配列、または選択肢の名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1494,9 +1533,9 @@ function form_radio_assoc($name, $options, $attributes = NULL)
 
 /**
  * 配列から選択するラジオボタンを生成する
- * 
+ *
  * $optionsは、選択時の値・文字列の配列とする。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$array		選択肢の配列
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1519,9 +1558,9 @@ function form_radio_array($name, $array, $attributes = NULL)
 
 /**
  * チェックボックスを生成する
- * 
+ *
  * $labelにNULL以外の値を指定した場合、&lt;label&gt;タグによるラベルも生成する。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	string	$value		選択時の値
  * @param	string	$label		ラベルの文字列
@@ -1529,7 +1568,7 @@ function form_radio_array($name, $array, $attributes = NULL)
  * @return	string	生成したHTMLタグ
  * @package	form
  */
-function form_checkbox($name, $value, $label, $attributes = NULL)
+function form_checkbox($name, $value, $label = NULL, $attributes = NULL)
 {
 	if (form_get_static($name)) {
 		return form_static_boolean($name, $value);
@@ -1541,12 +1580,12 @@ function form_checkbox($name, $value, $label, $attributes = NULL)
 
 /**
  * 連想配列から選択するチェックボックスを生成する
- * 
+ *
  * $optionsは、選択時の値=>選択肢の文字列とした連想配列を指定する。
  * form_set_optionsで設定した選択肢の名前を指定することもできる。
- * 
+ *
  * $nameの終端が[]でない場合、[]を付け加える。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$options	選択肢の連想配列、または選択肢の名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1573,11 +1612,11 @@ function form_checkbox_assoc($name, $options, $attributes = NULL)
 
 /**
  * 配列から選択するチェックボックスを生成する
- * 
+ *
  * $optionsは、選択時の値・文字列の配列とする。
- * 
+ *
  * $nameの終端が[]でない場合、[]を付け加える。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$array		選択肢の配列
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1603,13 +1642,13 @@ function form_checkbox_array($name, $array, $attributes = NULL)
 
 /**
  * テーブル型配列から選択するドロップダウンを生成する
- * 
+ *
  * 選択肢は、下記の要素から構成されたテーブル型配列を指定する。
- * 
+ *
  * | label | 選択肢の表示名
  * | value | 選択肢の値
  * | group | 選択肢のグループ名
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$options	選択肢
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1628,10 +1667,10 @@ function form_select($name, $options, $attributes = NULL)
 
 /**
  * 連想配列から選択するドロップダウンを生成する
- * 
+ *
  * $optionsは、選択時の値=>選択肢の文字列とした連想配列を指定する。
  * form_set_optionsで設定した選択肢の名前を指定することもできる。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$options	選択肢の連想配列、または選択肢の名前
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1643,9 +1682,12 @@ function form_select_assoc($name, $options, $attributes = NULL)
 	if (form_get_static($name)) {
 		return form_static_assoc($name, $options);
 	} else {
-		$options = array();
-		foreach (form_get_options($options) as $value => $label) {
-			$options[] = array('value' => $value, 'label' => $label);
+		if (is_string($options)) {
+			$array = array();
+			foreach (form_get_options($options) as $value => $label) {
+				$array[] = array('value' => $value, 'label' => $label);
+			}
+			$options = $array;
 		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
@@ -1654,9 +1696,9 @@ function form_select_assoc($name, $options, $attributes = NULL)
 
 /**
  * 配列から選択するドロップダウンを生成する
- * 
+ *
  * $optionsは、選択時の値・文字列の配列とする。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$array		選択肢の配列
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1668,9 +1710,12 @@ function form_select_array($name, $array, $attributes = NULL)
 	if (form_get_static($name)) {
 		return form_static_assoc($name, $options);
 	} else {
-		$options = array();
-		foreach ($array as $value) {
-			$options[] = array('value' => $value, 'label' => $value);
+		if (is_string($options)) {
+			$array = array();
+			foreach (form_get_options($options) as $value) {
+				$array[] = array('value' => $value, 'label' => $value);
+			}
+			$options = $array;
 		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
@@ -1679,7 +1724,7 @@ function form_select_array($name, $array, $attributes = NULL)
 
 /**
  * 数値から選択するドロップダウンを生成する
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	array	$min		選択肢の下限値
  * @param	array	$max		選択肢の上限値
@@ -1703,13 +1748,13 @@ function form_select_number($name, $min, $max, $attributes = NULL)
 
 /**
  * ファイルのアップロードフォームを生成する
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* form_upload_remove	| 削除のチェックボックスのラベル
  * |* form_upload_url		| アップロード済みの基準URL
  * |* form_upload_link		| アップロード済みのテキスト
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	boolean	$remove		削除できる場合にはTRUE、そうでない場合にはFALSE
  * @param	boolean	$link		アップロード済みのファイルへのリンクを
@@ -1745,9 +1790,9 @@ function form_upload($name, $remove = TRUE, $link = TRUE, $attributes = NULL)
 
 /**
  * 日時の選択肢フォームを生成する
- * 
+ *
  * 日時選択のフォーマットには、下記の書式文字列を使用できる。
- * 
+ *
  * |* {y}	|近年の選択肢 (2010年〜2100年)
  * |* {p}	|過去の年の選択肢 (1900年〜今年)
  * |* {m}	|月の選択肢
@@ -1755,21 +1800,21 @@ function form_upload($name, $remove = TRUE, $link = TRUE, $attributes = NULL)
  * |* {h}	|時の選択肢
  * |* {i}	|分の選択肢
  * |* {s}	|秒の選択肢
- * 
+ *
  * デフォルトでは{y}/{m}/{d}が使用される。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* form_date_year_min	| {y}の選択肢の最小値
  * |* form_date_year_max	| {y}の選択肢の最大値
  * |* form_date_past_min	| {p}の選択肢の最小値
- * 
+ *
  * 選択された値は、y, m, d, h, i, sをキーとする連想配列となるので、
  * MySQLデータベースに格納する際には、form_date_convertで変換する。
- * 
+ *
  * フォームの入力値は、MySQLデータベースの形式YYYY-MM-DD HH:II:SSか、
  * y, m, d, h, i, sをキーとする連想配列に対応する。
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	boolean	$format		日時選択のフォーマット
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
@@ -1815,9 +1860,9 @@ function form_date($name, $format = NULL, $attributes = NULL)
 
 /**
  * アップロードされたファイルの情報を取得する
- * 
+ *
  * フォームの名前がa[b][c]のように配列の形式にも対応している。
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	string	$key	$_FILESのキーの名前
  * @return	string	アップロードされたファイルの情報
@@ -1836,21 +1881,21 @@ function form_get_file($name, $key)
 
 /**
  * アップロードされたファイルを保存する
- * 
+ *
  * アップロードされたファイルは、一意の名前を付け、$dirに保存する。
  * $dataの該当値には、$dirと保存した名前を結合した文字列を設定する。
- * 
+ *
  * form_uploadで削除フラグを選択した場合には、
  * $dataの該当値を空文字列に設定する。
- * 
+ *
  * アップロードした拡張子が$extと異なる場合には、エラーとなる。
  * $extにNULLを設定した場合には、全ての拡張子のファイルが受け入れられる。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* form_upload_dir	| アップロード先のディレクトリ
  * |* error_upload		| アップロードに失敗した場合のエラーメッセージ
- * 
+ *
  * @param	array	$data	入力データの連想配列
  * @param	string	$name	対象のフォームの名前
  * @param	string	$dir	アップロード先のディレクトリ
@@ -1916,10 +1961,10 @@ function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 
 /**
  * form_dateで入力された日時をMySQLデータベース形式に変換する
- * 
+ *
  * $dataの該当値がy, m, d, h, i, sをキーとした連想配列である場合、
  * yyyy-mm-dd hh:ii:ss形式による文字列を設定する。
- * 
+ *
  * @param	array	$data	入力データの連想配列
  * @param	string	$name	対象のフォームの名前
  * @see		form_date
@@ -1950,7 +1995,7 @@ function form_date_convert(&$data, $name)
 
 /**
  * フォームのエラーを設定する
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @param	string	$message	エラーメッセージの文字列
  * @param	array	$vars		エラーメッセージの変数に埋め込む連想配列
@@ -1964,7 +2009,7 @@ function form_set_error($name, $message, $vars = array())
 
 /**
  * フォームのエラーを取得する
- * 
+ *
  * @param	string	$name		対象のフォームの名前
  * @return	string	エラーメッセージの文字列、エラーが発生していない場合にはNULL
  * @package	validate
@@ -1983,7 +2028,7 @@ function form_get_error($name)
 
 /**
  * フォームにエラーが発生しているかを調べる
- * 
+ *
  * @return	boolean	エラーが発生している場合にはTRUE、そうでない場合にはFALSE
  * @package	validate
  */
@@ -1995,15 +2040,15 @@ function form_has_error()
 
 /**
  * フォームのエラーをHTMLで取得する
- * 
+ *
  * 複数引数が指定された場合、エラーが発生している、
  * 先頭の引数のフォームのエラーメッセージを取得する。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* error_tag_open	| エラーメッセージの開始タグ
  * |* error_tag_close	| エラーメッセージの終了タグ
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @return	string	エラーメッセージのHTML、エラーが発生していない場合にはNULL
  * @package	validate
@@ -2024,7 +2069,7 @@ function form_error($name)
 
 /**
  * フィルタ・バリデーションルールを設定する
- * 
+ *
  * @param	string	$name	対象のフォームの名前
  * @param	array	$rule	ルールの連想配列
  * @package	validate
@@ -2037,14 +2082,14 @@ function rule($name, $rule = array())
 
 /**
  * 入力データのフィルタ処理を行う
- * 
+ *
  * rule関数で下記の項目について設定ができる。
- * 
+ *
  * |* kana |mb_convert_kanaの引数、変換しない場合はNULL。
  * |* trim |トリミングするならy。デフォルトはy
  * |* case |大文字にするならupper、小文字にするならlower、変換しない場合はNULL
  * |* default |入力データが空の場合のデフォルト値
- * 
+ *
  * @param	array	$data	フィルタ処理を行う連想配列
  * @return	array	フィルタ処理の結果の連想配列
  * @package	validate
@@ -2107,9 +2152,9 @@ function __filter($value, $rule)
 
 /**
  * 入力データのバリデーション処理を行う
- * 
+ *
  * rule関数で下記の項目について設定ができる。
- * 
+ *
  * |* required	| 入力必須項目ならy
  * |* min_bytes	| 最小バイト数
  * |* max_bytes	| 最大バイト数
@@ -2134,7 +2179,9 @@ function __filter($value, $rule)
  * |^			| decimal	| 小数値を含む数値
  * |^			| mail		| メールアドレス
  * |^			| ipv4		| IPv4アドレス
- * 
+ * |^			| hiragana	| ひらがな
+ * |^			| katakana	| カタカナ
+ *
  * @param	array	$data	バリデーションを行う連想配列
  * @return	boolean	エラーが発生しなかった場合にはTRUE、そうでない場合にはFALSE
  * @package	validate
@@ -2299,6 +2346,16 @@ function __validate($data, $name, $rule, $value)
 				return form_set_error($name, config('error_ipv4'), $rule);
 			}
 			break;
+		case 'hiragana':
+			if (!is_hiragana($value)) {
+				return form_set_error($name, config('error_hiragana'), $rule);
+			}
+			break;
+		case 'katakana':
+			if (!is_katakana($value)) {
+				return form_set_error($name, config('error_katakana'), $rule);
+			}
+			break;
 		default:
 			break;
 	}
@@ -2310,17 +2367,17 @@ function __validate($data, $name, $rule, $value)
 
 /**
  * MySQLデータベースに接続する
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* db_hostname	| データベースのホスト名
  * |* db_username	| データベースのユーザ名
  * |* db_password	| データベースのパスワード
  * |* db_database	| データベースのデータベース
  * |* db_charset	| データベースの文字コード
- * 
+ *
  * 失敗した場合にはfatal関数で強制終了する。
- * 
+ *
  * @return	resource	データベース接続ID
  * @package	db
  */
@@ -2366,7 +2423,7 @@ function db_connect()
 
 /**
  * MySQLデータベースの接続を閉じる
- * 
+ *
  * @package	db
  */
 function db_close()
@@ -2380,13 +2437,13 @@ function db_close()
 
 /**
  * SQLクエリを実行する
- * 
+ *
  * 失敗した場合にはfatal関数で強制終了する
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* log_query	| クエリ履歴のテーブル名。空文字列で無効化
- * 
+ *
  * @param	string	$query	SQLクエリを表す文字列
  * @return	mixed	結果のリソースID
  * @package	db
@@ -2422,10 +2479,10 @@ function db_query($query)
 
 /**
  * 文字列を安全にSQLクエリ文に埋め込める形式にエスケープする
- * 
+ *
  * mysql_real_escape_string関数を呼び出すため、
  * データベースへの接続を必要とする。
- * 
+ *
  * @param	string	$string	対象の文字列
  * @return	string	エスケープされた文字列
  * @package	db
@@ -2437,14 +2494,14 @@ function db_escape($string)
 
 /**
  * 文字列をクォートする
- * 
+ *
  * table.fieldの形式の場合、`table`.`field`の形式になる。
  * fieldのみの場合、`field`の形式になる。
  * いずれでもない場合、そのまま文字列を返す。
- * 
+ *
  * mysql_real_escape_string関数を呼び出すため、
  * データベースへの接続を必要とする。
- * 
+ *
  * @param	string	$field	対象の文字列
  * @return	string	エスケープされた文字列
  * @package	db
@@ -2468,9 +2525,9 @@ function db_quote_field($field)
 
 /**
  * テーブルのカラムについての情報を取得する
- * 
+ *
  * DESCRIBE構文を実行する。結果はグローバル変数でキャッシュする。
- * 
+ *
  * @param	string	$table	テーブル名
  * @return	array	テーブルのカラムについての情報
  * @package	db
@@ -2488,7 +2545,7 @@ function db_describe($table)
 
 /**
  * テーブルのプライマリキーを取得する
- * 
+ *
  * @param	string	$table	テーブル名
  * @return	string	プライマリキーのフィールド名
  * @package	db
@@ -2511,9 +2568,9 @@ function db_primary_key($table)
 
 /**
  * テーブルのデータを挿入可能な形式に変換する
- * 
+ *
  * $dataの要素名が$tableのフィールド名と一致するものだけを抽出する。
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	array	$data	対象の連想配列
  * @return	string	プライマリキーのフィールド名
@@ -2533,7 +2590,7 @@ function db_convert($table, $data)
 
 /**
  * トランザクションを開始する
- * 
+ *
  * @package	db
  */
 function db_start_transaction()
@@ -2545,7 +2602,7 @@ function db_start_transaction()
 
 /**
  * コミット処理を行う
- * 
+ *
  * @package	db
  */
 function db_commit()
@@ -2559,7 +2616,7 @@ function db_commit()
 
 /**
  * ロールバック処理を行う
- * 
+ *
  * @package	db
  */
 function db_rollback()
@@ -2574,7 +2631,7 @@ function db_rollback()
 
 /**
  * クエリ文を実行し、結果をレコードの配列で取得する
- * 
+ *
  * @param	string	$query		クエリ文
  * @param	string	$key_field	レコードのキーとするフィールド名
  * @return	array	結果のレコードの配列 (結果が空の場合、空配列)
@@ -2597,7 +2654,7 @@ function db_select_table($query, $key_field = NULL)
 
 /**
  * クエリ文を実行し、結果をレコードで取得する
- * 
+ *
  * @param	string	$query		クエリ文
  * @param	string	$row_number	取得する行番号
  * @return	array	結果のレコード (結果が空の場合、FALSE)
@@ -2616,7 +2673,7 @@ function db_select_row($query, $row_number = 0)
 
 /**
  * クエリ文を実行し、結果を列の連想配列で取得する
- * 
+ *
  * @param	string	$query			クエリ文
  * @param	string	$value_field	値として取得するフィールド名
  * @param	string	$key_field		キーとして取得するフィールド名
@@ -2645,7 +2702,7 @@ function db_select_column($query, $value_field = NULL, $key_field = NULL)
 
 /**
  * クエリ文を実行し、結果の値を取得する
- * 
+ *
  * @param	string	$query			クエリ文
  * @param	string	$value_field	値として取得するフィールド名
  * @param	string	$row_number		取得する行番号
@@ -2672,9 +2729,9 @@ function db_select_value($query, $value_field = NULL, $row_number = 0)
 
 /**
  * 条件をフィールド名と値で指定し、レコードを取得する
- * 
+ *
  * $cond_fieldが省略された場合、テーブルのプライマリキーを使用する。
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$cond_value	条件の値
  * @param	string	$cond_field	条件のフィールド名
@@ -2697,7 +2754,7 @@ function db_select_at($table, $cond_value, $cond_field = NULL)
 
 /**
  * 条件を連想配列で指定し、レコードの配列を取得する
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$cond		条件の連想配列
  * @return	array	結果のレコード
@@ -2712,15 +2769,15 @@ function db_select($table, $cond = array())
 
 /**
  * テーブルから選択肢を生成する
- * 
+ *
  * フォームの選択肢として有用な選択肢の連想配列を生成する。
- * 
+ *
  * $nameはデフォルトでname、title、プライマリキーを使用する。
  * $valueはデフォルトでプライマリキーを使用する。
- * 
+ *
  * 選択肢の連想配列は、orderという名前のフィールドが存在する場合には、
  * orderの数値の降順となるが、存在しない場合には$valueの順序となる。
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$name	選択肢のラベルのフィールド名
  * @param	string	$value	選択肢の値のフィールド名
@@ -2764,10 +2821,10 @@ function db_select_options($table, $name = NULL, $value = NULL, $cond = NULL)
 
 /**
  * テーブルにレコードを挿入する
- * 
+ *
  * createdとupdatedが現在の日時に設定される。
  * $idでプライマリキーの値を指定できる。
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$data		挿入するレコードの連想配列
  * @param	string	$id			プライマリキーの値
@@ -2800,9 +2857,9 @@ function db_insert($table, $data, $id = NULL)
 
 /**
  * テーブルを更新する
- * 
+ *
  * updatedが現在の日時に設定される。
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$cond	更新する条件の連想配列
  * @param	string	$data	更新する値の連想配列
@@ -2839,9 +2896,9 @@ function db_update($table, $data, $cond)
 
 /**
  * テーブルを更新する
- * 
+ *
  * updatedが現在の日時に設定される。
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$data		更新する値の連想配列
  * @param	string	$cond_value	条件の値
@@ -2862,7 +2919,7 @@ function db_update_at($table, $data, $cond_value, $cond_field = NULL)
 
 /**
  * テーブルを削除する
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$cond	削除する条件の連想配列
  * @return	integer	削除されたレコード数
@@ -2889,7 +2946,7 @@ function db_delete($table, $cond)
 
 /**
  * テーブルを削除する
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$cond_value	条件の値
  * @param	string	$cond_field	条件のフィールド名
@@ -2909,12 +2966,12 @@ function db_delete_at($table, $cond_value, $cond_field = NULL)
 
 /**
  * テーブルを挿入・更新する
- * 
+ *
  * $dataのプライマリキーの値が重複していない場合、挿入処理を行う。
  * 重複している場合、更新処理を行う。
- * 
+ *
  * updatedが現在の日時に設定される。
- * 
+ *
  * @param	string	$table		テーブル名
  * @param	string	$data		更新する値の連想配列
  * @return	integer	プライマリキーの値
@@ -2953,7 +3010,7 @@ function db_replace($table, $data)
 
 /**
  * MySQLの日時を生成する
- * 
+ *
  * @param	string	$timestamp	UNIXタイムスタンプ
  * @return	string	MySQLの日時文字列
  * @package	db
@@ -2968,7 +3025,7 @@ function db_datetime($timestamp = NULL)
 
 /**
  * MySQLの日付を生成する
- * 
+ *
  * @param	string	$timestamp	UNIXタイムスタンプ
  * @return	string	MySQLの日付文字列
  * @package	db
@@ -3024,9 +3081,9 @@ function __db_timestamp()
 
 /**
  * ページネーションのHTMLを生成する
- * 
+ *
  * ページネーションの入力値として、下記の連想配列の要素を設定する。
- * 
+ *
  * |* per_page	| ページ毎のデータ数
  * |* num_links	| 表示するページ番号の数
  * |* first_tag	| 最初に移動するタグ
@@ -3039,10 +3096,10 @@ function __db_timestamp()
  * |* close_tag	| ページネーションの終了タグ
  * |* url		| リンク先のURL
  * |* page		| 現在のページ番号
- * 
+ *
  * config関数で設定した下記の設定オプションが
  * デフォルト値として使用される。
- * 
+ *
  * - paginate_per_page
  * - paginate_num_links
  * - paginate_first_tag
@@ -3053,15 +3110,15 @@ function __db_timestamp()
  * - paginate_last_tag
  * - paginate_open_tag
  * - paginate_close_tag
- * 
+ *
  * ページネーションの返り値として、下記の連想配列の要素が設定される
- * 
+ *
  * |* offset		| 表示開始する行番号
  * |* limit			| 表示する行数
  * |* total_pages	| ページ数
  * |* total_rows	| 行数
  * |* html			| HTMLタグ
- * 
+ *
  * @param	integer	$total_rows	データ数
  * @param	array	$p			ページネーションの入力値
  * @return	array	ページネーションの出力値
@@ -3166,16 +3223,16 @@ function __paginate_tag($page, $url, $tag)
 
 /**
  * クエリを実行し、ページネーションのHTMLを生成する
- * 
+ *
  * ページネーションの入力値として、下記の連想配列の要素を設定する
- * 
+ *
  * |* query_count	| データ数を求めるクエリ文
- * 
+ *
  * ページネーションの返り値として、下記の連想配列の要素が設定される
- * 
+ *
  * |* records	| 取得したレコードの配列
  * |* count		| データ数
- * 
+ *
  * @param	string	$query	クエリ文
  * @param	array	$p		ページネーションの入力値
  * @return	array	ページネーションの出力値
@@ -3207,10 +3264,10 @@ function db_paginate($query, $p = NULL)
 
 /**
  * SQLクエリ文の生成を開始する
- * 
+ *
  * 現在の設定をスタックに保存する。
  * SQLクエリ文の生成条件はスタック可能であり、sql_beginは何度も呼び出せる。
- * 
+ *
  * @package	sql
  */
 function sql_push()
@@ -3227,9 +3284,9 @@ function sql_push()
 
 /**
  * SQLクエリ文の生成を終了する
- * 
+ *
  * 最後にsql_beginを呼んだ際のSQLクエリ文の生成条件に復帰する。
- * 
+ *
  * @package	sql
  */
 function sql_pop()
@@ -3242,7 +3299,7 @@ function sql_pop()
 
 /**
  * 処理対象のテーブル名を設定する
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$alias	エイリアス名
  * @package	sql
@@ -3257,7 +3314,7 @@ function sql_table($table, $alias = NULL)
 
 /**
  * SQLクエリ文の生成条件をクリアする
- * 
+ *
  * @package	sql
  */
 function sql_clean()
@@ -3269,7 +3326,7 @@ function sql_clean()
 
 /**
  * SELECT文を生成する
- * 
+ *
  * 下記のSQL文の生成条件が有効となる。
  * - sql_field
  * - sql_join
@@ -3277,7 +3334,7 @@ function sql_clean()
  * - sql_group
  * - sql_order
  * - sql_limit
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$alias	エイリアス名
  * @return	string	生成されたSQL文字列
@@ -3323,10 +3380,10 @@ function sql_select($table = NULL, $alias = NULL)
 
 /**
  * INSERT文を生成する
- * 
+ *
  * 下記のSQL文の生成条件が有効となる。
  * - sql_value
- * 
+ *
  * @param	string	$table	テーブル名
  * @param	string	$ignore	キーが重複する際に無視する場合はTRUE
  * @return	string	生成されたSQL文字列
@@ -3358,11 +3415,11 @@ function sql_insert($table = NULL, $ignore = FALSE)
 
 /**
  * UDPATE文を生成する
- * 
+ *
  * 下記のSQL文の生成条件が有効となる。
  * - sql_set
  * - sql_where
- * 
+ *
  * @param	string	$table	テーブル名
  * @return	string	生成されたSQL文字列
  * @package	sql
@@ -3386,10 +3443,10 @@ function sql_update($table = NULL)
 
 /**
  * DELETE文を生成する
- * 
+ *
  * 下記のSQL文の生成条件が有効となる。
  * - sql_where
- * 
+ *
  * @param	string	$table	テーブル名
  * @return	string	生成されたSQL文字列
  * @package	sql
@@ -3407,10 +3464,10 @@ function sql_delete($table = NULL)
 
 /**
  * SELECT文で取得するフィールドを追加する
- * 
+ *
  * $fieldにはdb_quote_fieldでの指定形式が使用できる。
  * フィールド名単体、テーブル名とフィールド名の指定、式の指定ができる。
- * 
+ *
  * @param	string	$field	取得するフィールド
  * @param	string	$alias	エイリアス名
  * @package	sql
@@ -3427,13 +3484,13 @@ function sql_field($field, $alias = NULL)
 
 /**
  * 他テーブルとの結合条件を追加する
- * 
+ *
  * 下記の形式で結合条件が追加される。
  * LEFT JOIN `$join_fieldのテーブル名` ON $join_field=$cond_field
- * 
+ *
  * $cond_fieldにはdb_quote_fieldでの指定形式が使用できる。
  * フィールド名単体、テーブル名とフィールド名の指定、式の指定ができる。
- * 
+ *
  * @param	string	$table		結合先のテーブル名
  * @param	string	$field		結合先のフィールド名
  * @param	string	$cond_table	条件のテーブル名
@@ -3455,12 +3512,12 @@ function sql_join($table, $field, $cond_table, $cond_field, $alias = NULL)
 
 /**
  * WHERE節の指定を開始する
- * 
+ *
  * 通常、sql_where系で条件を指定する場合AND条件となるが、一部をOR条件等で
  * 結合する場合、sql_where_beginで論理演算子を指定し、sql_where_endで終了する。
- * 
+ *
  * WHERE条件はスタック可能であり、sql_where_beginは何度も呼び出せる。
- * 
+ *
  * @param	string	$glue	条件を結合する論理演算子
  * @package	sql
  */
@@ -3492,7 +3549,7 @@ function sql_where_begin($glue)
 
 /**
  * WHERE節の指定を開始する
- * 
+ *
  * 前にsql_where_beginを呼び出した際の論理演算子に復帰する。
  * @package	sql
  */
@@ -3509,7 +3566,7 @@ function sql_where_end()
 
 /**
  * WHERE節に条件文を加える
- * 
+ *
  * @param	string	$expr	条件を表す文字列
  * @package	sql
  */
@@ -3527,7 +3584,7 @@ function sql_where($expr)
 
 /**
  * 文字列との比較をWHERE節に追加する
- * 
+ *
  * @param	string	$field		フィールドの条件 (db_quote_fieldの形式)
  * @param	string	$value		比較する値
  * @param	string	$operator	比較演算子
@@ -3541,7 +3598,7 @@ function sql_where_string($field, $value, $operator = '=')
 
 /**
  * 整数値との比較をWHERE節に追加する
- * 
+ *
  * @param	string	$field		フィールドの条件 (db_quote_fieldの形式)
  * @param	integer	$value		比較する値
  * @param	string	$operator	比較演算子
@@ -3555,7 +3612,7 @@ function sql_where_integer($field, $value, $operator = '=')
 
 /**
  * 範囲条件をWHERE節に追加する
- * 
+ *
  * @param	string	$field	フィールドの条件 (db_quote_fieldの形式)
  * @param	string	$min	下限値
  * @param	string	$max	上限値
@@ -3570,7 +3627,7 @@ function sql_where_between($field, $min, $max)
 
 /**
  * キーワード検索をWHERE節に追加する
- * 
+ *
  * @param	string	$fields		対象となるフィールド、またはフィールドの配列
  * @param	string	$keywords	空白で区切られた検索キーワード
  * @package	sql
@@ -3602,7 +3659,7 @@ function sql_where_search($fields, $keywords)
 
 /**
  * GROUP BY節を設定する
- * 
+ *
  * @param	string	$field	グループ化するフィールド名
  * @package	sql
  */
@@ -3615,7 +3672,7 @@ function sql_group($field)
 
 /**
  * ORDER BY節を追加する
- * 
+ *
  * @param	string	$field		ソートするフィールド名
  * @param	string	$ascending	昇順ならTRUE、降順ならFALSE
  * @package	sql
@@ -3634,7 +3691,7 @@ function sql_order($field, $ascending = TRUE)
 
 /**
  * LIMIT節を設定する
- * 
+ *
  * @param	integer	$offset	取得開始する行番号
  * @param	integer	$limit	取得するレコード数
  * @package	sql
@@ -3648,7 +3705,7 @@ function sql_limit($offset, $limit)
 
 /**
  * INSERT文のフィールド名と値を設定する
- * 
+ *
  * @param	string	$field	挿入するレコードのフィールド名
  * @param	string	$value	挿入するレコードの値
  * @package	sql
@@ -3661,7 +3718,7 @@ function sql_value($field, $value)
 
 /**
  * UPDATE文のSET節に追加する
- * 
+ *
  * @param	string	$field	フィールド名
  * @param	string	$expr	更新する式
  * @package	sql
@@ -3673,7 +3730,7 @@ function sql_set($field, $expr)
 
 /**
  * 文字列による更新をSET節に追加する
- * 
+ *
  * @param	string	$field	フィールド名
  * @param	string	$value	更新する値
  * @package	sql
@@ -3685,7 +3742,7 @@ function sql_set_string($field, $value)
 
 /**
  * 整数値による更新をSET節に追加する
- * 
+ *
  * @param	string	$field	フィールド名
  * @param	integer	$value	更新する値
  * @package	sql
@@ -3712,13 +3769,13 @@ function __sql_append($key, $str)
 
 /**
  * メールを送信する
- * 
+ *
  * メールログの設定がある場合には、ログに記録する。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* log_mail	| メール送信履歴のテーブル名。空文字列で無効化
- * 
+ *
  * @param	string	$to			送信先メールアドレス
  * @param	string	$from		送信元メールアドレス
  * @param	string	$subject	メールの題名
@@ -3752,7 +3809,7 @@ function sendmail($to, $from, $subject, $message)
 
 /**
  * 認証領域を定義し、現在の認証領域に設定する
- * 
+ *
  * @param	string	$realm	認証領域の名前
  * @param	string	$url	認証するためのログインURL
  * @package	auth
@@ -3792,7 +3849,7 @@ function auth_realm($realm, $url)
 
 /**
  * 現在の認証領域にログインする
- * 
+ *
  * @param	integer	$id	ユーザの識別子 (0以外の値)
  * @package	auth
  */
@@ -3818,7 +3875,7 @@ function auth_login($id)
 
 /**
  * 現在の認証領域からログアウトする
- * 
+ *
  * @package	auth
  */
 function auth_logout()
@@ -3828,10 +3885,10 @@ function auth_logout()
 
 /**
  * 認証を要求する
- * 
+ *
  * 現在の認証領域でログインしていない場合には、auth_realmで設定した
  * ログインURLにリダイレクトし、強制終了する。
- * 
+ *
  * @package	auth
  */
 function auth_require()
@@ -3845,7 +3902,7 @@ function auth_require()
 
 /**
  * ユーザの識別子を取得する
- * 
+ *
  * @return	integer	ユーザの識別子。ログインしていない場合には、0を返す。
  * @package	auth
  */
@@ -3865,7 +3922,7 @@ function auth_id()
 
 /**
  * ブラウザをリダイレクトする
- * 
+ *
  * @param	string	$url	リダイレクト先のURL
  * @package	controller
  */
@@ -3876,14 +3933,14 @@ function redirect($url)
 
 /**
  * 致命的エラーの発生を通知する
- * 
+ *
  * エラーメッセージを表示して、強制終了する。
- * 
+ *
  * config関数で設定した下記の設定オプションが使用される。
- * 
+ *
  * |* log_error		| エラーログのテーブル名。空文字列で無効化
  * |* error_title	| エラーページのタイトル
- * 
+ *
  * @param	string	$message	エラーメッセージ
  * @param	string	$severity	重要度
  * @package	controller
@@ -3928,15 +3985,15 @@ function fatal($message, $severity = 'fatal')
 
 /**
  * ビューのフィルタ関数を追加する
- * 
+ *
  * render関数の出力に対するフィルタ関数を登録する。
- * 
+ *
  * フィルタ関数は、第一引数が出力の文字列、第二引数が$argとなり、
  * 変換結果を返り値とするものである。
- * 
+ *
  * フィルタ関数はチェイン処理され、
  * ビュー評価の際に最初に登録したものから順番に実行される。
- * 
+ *
  * @param	string	$function	ビュー出力のフィルタ関数
  * @param	mixed	$arg		フィルタ関数の第二引数
  * @package	controller
@@ -3949,10 +4006,10 @@ function add_filter($function, $arg = NULL)
 
 /**
  * ビューを評価し、ブラウザに出力する
- * 
+ *
  * $returnがTRUEの場合、ビューを出力せずに返り値として返す。
  * ビューを評価する際、$dataの変数が展開される。
- * 
+ *
  * @param	string	$filename	ビューファイルのファイル名
  * @param	array	$data		ビューに渡す変数
  * @param	boolean	$return		出力せずに返り値とするならTRUE
@@ -3963,6 +4020,9 @@ function add_filter($function, $arg = NULL)
 function render($filename, $data = array(), $return = FALSE)
 {
 	global $__photon_filter;
+
+	// ビューファイルの相対位置指定を解決する
+	$filename = relative_path($filename, config('view_dir'));
 
 	// ビューファイルの存在を確認する
 	if (!file_exists($filename)) {
@@ -3982,15 +4042,15 @@ function render($filename, $data = array(), $return = FALSE)
 
 	if (!$__ob) {
 		// ビューファイルを出力する
-		extract($data);
-		include($filename);
+		extract($__data);
+		include($__filename);
 		return NULL;
 	}
 
 	// ビューファイルを評価する
 	ob_start();
-	extract($data);
-	include($filename);
+	extract($__data);
+	include($__filename);
 	$contents = ob_get_contents();
 	ob_end_clean();
 
@@ -4012,7 +4072,7 @@ function render($filename, $data = array(), $return = FALSE)
 
 /**
  * アクション関数を追加する
- * 
+ *
  * @param	string	$action		アクション名
  * @param	string	$function	アクション関数
  * @param	mixed	$arg		アクション関数の第二引数
@@ -4026,7 +4086,7 @@ function add_action($action, $function, $arg = NULL)
 
 /**
  * 現在のアクションを取得する
- * 
+ *
  * @param	array	$data	アクション関数のパラメータ
  * @return	mixed	アクション名
  * @package	controller
@@ -4052,15 +4112,15 @@ function get_action($data = NULL)
 
 /**
  * アクションを実行する
- * 
+ *
  * 通常は引数なしで呼び出し、GETやPOSTのactionパラメータのアクションを実行する。
- * 
+ *
  * action[アクション名]といった名前のボタンを作ることで、
  * 複数のボタンでアクションを切り分ける事ができる。
- * 
+ *
  * $actionや$dataを指定することで、アクション内で別のアクションを呼び出すことも
  * できる。
- * 
+ *
  * @param	string	$action		アクション名
  * @param	mixed	$data		アクション関数のパラメータ
  * @return	mixed	アクション関数の返り値
@@ -4120,6 +4180,7 @@ function __photon_init()
 	// mbstringの設定
 	mb_language("Japanese");
 	mb_internal_encoding("utf-8");
+	mb_regex_encoding("utf-8");
 
 	// ブラウザを閉じても実行する
 	ignore_user_abort();
