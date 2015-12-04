@@ -803,8 +803,10 @@ function tag_build_attributes($array)
 	}
 	$str = '';
 	foreach ($array as $key => $value) {
-		$str .= htmlspecialchars($key) . '=';
-		$str .= '"' . htmlspecialchars($value) . '" ';
+		if (is_string($value) || is_numeric($value)) {
+			$str .= htmlspecialchars($key) . '=';
+			$str .= '"' . htmlspecialchars($value) . '" ';
+		}
 	}
 	return rtrim($str, ' ');
 }
@@ -892,7 +894,13 @@ function tag_radio($name, $value, $label, $checked, $attributes = NULL)
 	if ($label === '' || $label === NULL) {
 		return tag_open('input', $attributes, TRUE);
 	} else {
-		$str = tag_open('label') . tag_open('input', $attributes, TRUE);
+		if (isset($attributes['label'])) {
+			$label_attributes = $attributes['label'];
+		} else {
+			$label_attributes = NULL;
+		}
+		$str = tag_open('label', $label_attributes);
+		$str .= tag_open('input', $attributes, TRUE);
 		$str .= htmlspecialchars($label) . tag_close('label');
 		return $str;
 	}
@@ -1777,9 +1785,9 @@ function form_upload($name, $remove = TRUE, $link = TRUE, $attributes = NULL)
 	}
 	if ($link) {
 		$url = config('form_upload_url') . form_get_value($name);
-		$ext = extension($value);
+		$ext = strtolower(extension($value));
 		if (in_array($ext, array('jpg', 'jpeg', 'gif', 'png'))) {
-			$text = tag_img($value);
+			$text = tag_img($url);
 		} else {
 			$text = config('form_upload_link');
 		}
@@ -1906,6 +1914,9 @@ function form_get_file($name, $key)
 function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 {
 	$error = form_get_file($name, 'error');
+	if ($error === NULL) {
+		return;
+	}
 	if ($error == UPLOAD_ERR_OK) {
 		// 元のファイルの拡張子を取得し、チェックする
 		$ext = extension(form_get_file($name, 'name'));
