@@ -2405,25 +2405,23 @@ function db_connect()
 	$db_hostname = config('db_hostname');
 	$db_username = config('db_username');
 	$db_password = config('db_password');
-	$__photon_link = @mysql_connect($db_hostname, $db_username, $db_password);
+	$__photon_link = mysqli_connect($db_hostname, $db_username, $db_password);
 	if ($__photon_link === FALSE) {
 		fatal(config('error_db_connect'));
 	}
 
 	// MySQLデータベースを選択する
 	$db_database = config('db_database');
-	if (mysql_select_db($db_database, $__photon_link) === FALSE) {
+	if (mysqli_select_db($__photon_link, $db_database) === FALSE) {
 		fatal(config('error_db_select'));
 	}
 
 	// 文字コードをutf-8に設定する
 	$db_charset = config('db_charset');
-	if (function_exists('mysql_set_charset')) {
-		if (mysql_set_charset($db_charset, $__photon_link) === FALSE) {
-			fatal(config('error_db_charset'));
-		}
+	if (mysqli_set_charset($__photon_link, $db_charset) === FALSE) {
+		fatal(config('error_db_charset'));
 	} else {
-		if (mysql_query("SET NAMES " . $db_charset, $__photon_link) === FALSE) {
+		if (mysqli_query("SET NAMES " . $db_charset, $__photon_link) === FALSE) {
 			fatal(config('error_db_charset'));
 		}
 	}
@@ -2441,7 +2439,7 @@ function db_close()
 {
 	global $__photon_link;
 	if (isset($__photon_link) && $__photon_link !== FALSE) {
-		mysql_close($__photon_link);
+		mysqli_close($__photon_link);
 		$__photon_link = FALSE;
 	}
 }
@@ -2466,12 +2464,13 @@ function db_query($query)
 	$link = db_connect();
 
 	// クエリを実行する
-	$result = mysql_query($query, $link);
+	$result = mysqli_query($link, $query);
 
 	// クエリに失敗した場合の処理
 	if ($result === FALSE) {
 		$message = config('error_db_query') . "\n";
-		$message .= mysql_error($link) . "\n" . $query;
+		$message .= mysqli_error($link);
+		$message .= "\n" . $query;
 		fatal($message);
 	}
 
@@ -2491,7 +2490,7 @@ function db_query($query)
 /**
  * 文字列を安全にSQLクエリ文に埋め込める形式にエスケープする
  *
- * mysql_real_escape_string関数を呼び出すため、
+ * mysqli_real_escape_string関数を呼び出すため、
  * データベースへの接続を必要とする。
  *
  * @param	string	$string	対象の文字列
@@ -2500,7 +2499,7 @@ function db_query($query)
  */
 function db_escape($string)
 {
-	return mysql_real_escape_string($string, db_connect());
+	return mysqli_escape_string(db_connect(), $string);
 }
 
 /**
@@ -2510,7 +2509,7 @@ function db_escape($string)
  * fieldのみの場合、`field`の形式になる。
  * いずれでもない場合、そのまま文字列を返す。
  *
- * mysql_real_escape_string関数を呼び出すため、
+ * mysqli_real_escape_string関数を呼び出すため、
  * データベースへの接続を必要とする。
  *
  * @param	string	$field	対象の文字列
@@ -2652,14 +2651,14 @@ function db_select_table($query, $key_field = NULL)
 {
 	$result = db_query($query);
 	$return = array();
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		if ($key_field === NULL) {
 			$return[] = $row;
 		} else {
 			$return[$row[$key_field]] = $row;
 		}
 	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 	return $return;
 }
 
@@ -2675,10 +2674,10 @@ function db_select_row($query, $row_number = 0)
 {
 	$result = db_query($query);
 	if ($row_number != 0) {
-		mysql_data_seek($result, $row_number);
+		mysqli_data_seek($result, $row_number);
 	}
-	$return = mysql_fetch_assoc($result);
-	mysql_free_result($result);
+	$return = mysqli_fetch_assoc($result);
+	mysqli_free_result($result);
 	return $return;
 }
 
@@ -2695,7 +2694,7 @@ function db_select_column($query, $value_field = NULL, $key_field = NULL)
 {
 	$result = db_query($query);
 	$return = array();
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		if ($value_field === NULL) {
 			$value = current($row);
 		} else {
@@ -2707,7 +2706,7 @@ function db_select_column($query, $value_field = NULL, $key_field = NULL)
 			$return[$row[$key_field]] = $value;
 		}
 	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 	return $return;
 }
 
@@ -2724,9 +2723,9 @@ function db_select_value($query, $value_field = NULL, $row_number = 0)
 {
 	$result = db_query($query);
 	if ($row_number != 0) {
-		mysql_data_seek($result, $row_number);
+		mysqli_data_seek($result, $row_number);
 	}
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	if ($row === FALSE) {
 		$return = FALSE;
 	} else if ($value_field === NULL) {
@@ -2734,7 +2733,7 @@ function db_select_value($query, $value_field = NULL, $row_number = 0)
 	} else {
 		$return = $row[$value_field];
 	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 	return $return;
 }
 
@@ -2863,7 +2862,7 @@ function db_insert($table, $data, $id = NULL)
 	db_query($query);
 
 	// 生成したIDを返す
-	return mysql_insert_id(db_connect());
+	return mysqli_insert_id(db_connect());
 }
 
 /**
@@ -2902,7 +2901,7 @@ function db_update($table, $data, $cond)
 	db_query($query);
 
 	// 影響したIDを返す
-	return mysql_affected_rows(db_connect());
+	return mysqli_affected_rows(db_connect());
 }
 
 /**
@@ -2952,7 +2951,7 @@ function db_delete($table, $cond)
 	db_query($query);
 
 	// 影響したIDを返す
-	return mysql_affected_rows(db_connect());
+	return mysqli_affected_rows(db_connect());
 }
 
 /**
@@ -3016,7 +3015,7 @@ function db_replace($table, $data)
 	db_query($query);
 
 	// 生成したIDを返す
-	return mysql_insert_id(db_connect());
+	return mysqli_insert_id(db_connect());
 }
 
 /**
@@ -4172,12 +4171,12 @@ function execute($action = NULL, $data = NULL)
 function __photon_init()
 {
 	// PHPのバージョンを調べる
-	if (version_compare(PHP_VERSION, '4.4', '<')) {
-		die('This application requires at least PHP version 4.4');
+	if (version_compare(PHP_VERSION, '5.1', '<')) {
+		die('This application requires at least PHP version 5.1');
 	}
 
 	// PHPの拡張を調べる
-	foreach (array('gd', 'mcrypt', 'mbstring') as $extension) {
+	foreach (array('gd', 'mcrypt', 'mbstring', 'mysqli') as $extension) {
 		if (!extension_loaded($extension)) {
 			die('This application requires extension: ' . $extension);
 		}

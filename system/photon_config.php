@@ -30,11 +30,9 @@
 //	Photon -- a simple php library for building simple web applications
 //	http://entap.github.com/photon
 //
-
 //------------------------------------------------------------------------------
 // フォーム
 //------------------------------------------------------------------------------
-
 // 読込専用フォームで配列を結合する文字列
 config('static_glue', ',');
 
@@ -54,16 +52,16 @@ config('form_upload_remove', '削除');
 config('form_upload_link', 'ファイル');
 
 // アップロード済みの基準URL
-config('form_upload_dir', dirname(dirname(__FILE__)) . '/upload/');
+config('form_upload_dir', dirname(dirname(__FILE__)) . '/storage/');
 
 // アップロード済みのテキスト
-config('form_upload_url', '/upload/');
+config('form_upload_url', '/storage/');
 
 // form_dateの書式の{y}の選択肢の最小値
 config('form_date_year_min', 2010);
 
 // form_dateの書式の{y}の選択肢の最大値
-config('form_date_year_max', 2100);
+config('form_date_year_max', date('Y') + 1);
 
 // form_dateの書式の{p}の選択肢の最小値
 config('form_date_past_min', 1900);
@@ -74,12 +72,11 @@ config('form_date_format', '{y}年{m}月{d}日');
 //------------------------------------------------------------------------------
 // エラーメッセージ
 //------------------------------------------------------------------------------
-
 // アップロードに失敗した場合のエラーメッセージ
 config('error_upload', 'アップロードに失敗しました');
 
 // エラーメッセージの開始タグ
-config('error_tag_open', '<div class="error">');
+config('error_tag_open', '<div class="alert alert-danger">');
 
 // エラーメッセージの終了タグ
 config('error_tag_close', '</div>');
@@ -189,7 +186,6 @@ config('error_view_not_found', 'ビューファイルが見つかりませんで
 //------------------------------------------------------------------------------
 // ページネーション
 //------------------------------------------------------------------------------
-
 // ページ毎のデータ数
 config('paginate_per_page', 30);
 
@@ -197,33 +193,32 @@ config('paginate_per_page', 30);
 config('paginate_num_links', 5);
 
 // 最初に移動するタグ
-config('paginate_first_tag', ' <a href="{url}">&laquo;</a> ');
+config('paginate_first_tag', '<li><a href="{url}">&laquo;</a></li>');
 
 // 前に移動するタグ
-config('paginate_prev_tag', ' <a href="{url}">&lt;</a> ');
+config('paginate_prev_tag', '<li><a href="{url}">&lt;</a></li>');
 
 // ページ番号に移動するタグ
-config('paginate_link_tag', ' <a href="{url}">{page}</a> ');
+config('paginate_link_tag', '<li><a href="{url}">{page}</a></li>');
 
 // 現在のページのタグ
-config('paginate_active_tag', ' <strong>{page}</strong> ');
+config('paginate_active_tag', '<li class="active"><a href="{url}">{page}</a></li>');
 
 // 次に移動するタグ
-config('paginate_next_tag', ' <a href="{url}">&gt;</a> ');
+config('paginate_next_tag', '<li><a href="{url}">&gt;</a></li>');
 
 // 最後に移動するタグ
-config('paginate_last_tag', ' <a href="{url}">&raquo;</a> ');
+config('paginate_last_tag', '<li><a href="{url}">&raquo;</a></li>');
 
 // ページネーションの開始タグ
-config('paginate_open_tag', '<div>');
+config('paginate_open_tag', '<nav><ul class="pagination">');
 
 // ページネーションの終了タグ
-config('paginate_close_tag', '</div>');
+config('paginate_close_tag', '</ul></nav>');
 
 //------------------------------------------------------------------------------
 // 認証
 //------------------------------------------------------------------------------
-
 // 認証の有効期限(秒数)
 config('auth_expire', 3600);
 
@@ -233,12 +228,11 @@ config('auth_realm', 'auth');
 //------------------------------------------------------------------------------
 // ログ
 //------------------------------------------------------------------------------
-
 // メール送信履歴のテーブル名(空文字列で無効化)
-config('log_mail', '');
+config('log_mail', 'log_mail');
 
 // エラー履歴のテーブル名(空文字列で無効化)
-config('log_error', '');
+config('log_error', 'log_error');
 
 // クエリ履歴のテーブル名(空文字列で無効化)
 config('log_query', '');
@@ -246,15 +240,12 @@ config('log_query', '');
 //------------------------------------------------------------------------------
 // データベース
 //------------------------------------------------------------------------------
-
 // データベースの接続文字コード
 config('db_charset', 'utf8');
 
 //------------------------------------------------------------------------------
 // ビュー
 //------------------------------------------------------------------------------
-
 // ビューの相対位置
 config('view_dir', './');
-
 ?>
