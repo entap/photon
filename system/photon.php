@@ -2757,24 +2757,20 @@ function db_select_at($table, $cond_value, $cond_field = NULL)
 }
 
 /**
- * キャッシュ付きでdb_select_atを呼び出す
+ * テーブルの行を取得する
  *
- * $cond_fieldが省略された場合、テーブルのプライマリキーを使用する。
- *
- * @param	string	$table		テーブル名
- * @param	string	$cond_value	条件の値
- * @param	string	$cond_field	条件のフィールド名
+ * @param	string	$table	テーブル名
+ * @param	string	$id		プライマリキーの値
  * @return	array	結果のレコード
  * @package	db
  */
-function db_cselect_at($table, $cond_value, $cond_field = NULL)
+function db_get_at($table, $id)
 {
-	global $__cache;
-	$key = $table . '|' . $cond_value . '|' . strval($cond_field);
-	if (!isset($__cache[$key])) {
-		$__cache[$key] = db_select_at($table, $cond_value, $cond_field);
+	global $__db_cache;
+	if (!isset($__db_cache[$table][$id])) {
+		$__db_cache[$table][$id] = db_select_at($table, $id);
 	}
-	return $__cache[$key];
+	return $__db_cache[$table][$id];
 }
 
 /**
