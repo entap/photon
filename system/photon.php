@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2015, Entap,Inc.
+ * Copyright (c) 2014-2016, Entap,Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1690,15 +1690,12 @@ function form_select_assoc($name, $options, $attributes = NULL)
 	if (form_get_static($name)) {
 		return form_static_assoc($name, $options);
 	} else {
-		if (is_string($options)) {
-			$array = array();
-			foreach (form_get_options($options) as $value => $label) {
-				$array[] = array('value' => $value, 'label' => $label);
-			}
-			$options = $array;
+		$select_options = array();
+		foreach (form_get_options($options) as $value => $label) {
+			$select_options[] = array('value' => $value, 'label' => $label);
 		}
 		$selected = form_get_value($name);
-		return tag_select($name, $options, $selected, $attributes);
+		return tag_select($name, $select_options, $selected, $attributes);
 	}
 }
 
@@ -1708,22 +1705,19 @@ function form_select_assoc($name, $options, $attributes = NULL)
  * $optionsは、選択時の値・文字列の配列とする。
  *
  * @param	string	$name		対象のフォームの名前
- * @param	array	$array		選択肢の配列
+ * @param	array	$options		選択肢の配列
  * @param	mixed	$attributes	追加するタグの属性の文字列、または連想配列
  * @return	string	生成したHTMLタグ
  * @package	form
  */
-function form_select_array($name, $array, $attributes = NULL)
+function form_select_array($name, $options, $attributes = NULL)
 {
 	if (form_get_static($name)) {
 		return form_static_assoc($name, $options);
 	} else {
-		if (is_string($options)) {
-			$array = array();
-			foreach (form_get_options($options) as $value) {
-				$array[] = array('value' => $value, 'label' => $value);
-			}
-			$options = $array;
+		$select_options = array();
+		foreach (form_get_options($options) as $value) {
+			$select_options[] = array('value' => $value, 'label' => $value);
 		}
 		$selected = form_get_value($name);
 		return tag_select($name, $options, $selected, $attributes);
@@ -2421,7 +2415,7 @@ function db_connect()
 	if (mysqli_set_charset($__photon_link, $db_charset) === FALSE) {
 		fatal(config('error_db_charset'));
 	} else {
-		if (mysqli_query("SET NAMES " . $db_charset, $__photon_link) === FALSE) {
+		if (mysqli_query($__photon_link, "SET NAMES " . $db_charset) === FALSE) {
 			fatal(config('error_db_charset'));
 		}
 	}
@@ -2763,6 +2757,27 @@ function db_select_at($table, $cond_value, $cond_field = NULL)
 }
 
 /**
+ * キャッシュ付きでdb_select_atを呼び出す
+ *
+ * $cond_fieldが省略された場合、テーブルのプライマリキーを使用する。
+ *
+ * @param	string	$table		テーブル名
+ * @param	string	$cond_value	条件の値
+ * @param	string	$cond_field	条件のフィールド名
+ * @return	array	結果のレコード
+ * @package	db
+ */
+function db_cselect_at($table, $cond_value, $cond_field = NULL)
+{
+	global $__cache;
+	$key = $table . '|' . $cond_value . '|' . strval($cond_field);
+	if (!isset($__cache[$key])) {
+		$__cache[$key] = db_select_at($table, $cond_value, $cond_field);
+	}
+	return $__cache[$key];
+}
+
+/**
  * 条件を連想配列で指定し、レコードの配列を取得する
  *
  * @param	string	$table		テーブル名
@@ -2995,6 +3010,9 @@ function db_replace($table, $data)
 	$data = db_convert($table, $data);
 
 	// INSERT ON DUPLICATE KEY UPDATE文を生成
+	if (isset($data[$pk]) && $data[$pk] === '') {
+		unset($data[$pk]);
+	}
 	$query = __db_insert($table, $data);
 	if (isset($data[$pk])) {
 		unset($data[$pk]);
