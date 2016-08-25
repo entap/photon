@@ -156,6 +156,9 @@ config('error_hiragana', 'ひらがなを入力してください');
 // カタカナではない場合のエラーメッセージ
 config('error_katakana', 'カタカナを入力してください');
 
+// URLのエラーメッセージ
+config('error_url', 'URLを正しく入力してください');
+
 // データベースの接続に失敗した場合のエラーメッセージ
 config('error_db_connect', 'データベースの接続に失敗しました');
 

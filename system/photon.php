@@ -2186,6 +2186,7 @@ function __filter($value, $rule)
  * |^			| ipv4		| IPv4アドレス
  * |^			| hiragana	| ひらがな
  * |^			| katakana	| カタカナ
+ * |^			| url		| URL
  *
  * @param	array	$data	バリデーションを行う連想配列
  * @return	boolean	エラーが発生しなかった場合にはTRUE、そうでない場合にはFALSE
@@ -2359,6 +2360,11 @@ function __validate($data, $name, $rule, $value)
 		case 'katakana':
 			if (!is_katakana($value)) {
 				return form_set_error($name, config('error_katakana'), $rule);
+			}
+			break;
+		case 'url':
+			if (parse_url($value)== -1) {
+				return form_set_error($name, config('error_url'), $rule);
 			}
 			break;
 		default:
