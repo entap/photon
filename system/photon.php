@@ -2073,6 +2073,18 @@ function form_error($name)
 }
 
 /**
+ * フィルタ・バリデーションルールをクリアする
+ *
+ * @package	validate
+ */
+function rule_clean()
+{
+	global $__photon_form_rule;
+	$__photon_form_rule = array();
+}
+
+
+/**
  * フィルタ・バリデーションルールを設定する
  *
  * @param	string	$name	対象のフォームの名前
@@ -3959,6 +3971,31 @@ function auth_id()
 function redirect($url)
 {
 	header('Location: ' . relative_url($url, get_request_url()));
+}
+
+/**
+ * フラッシュメッセージを設定・取得する
+ *
+ * @param	string	$message	フラッシュメッセージ
+ * @return	string	前に設定されたフラッシュメッセージ
+ */
+function flash($message = NULL)
+{
+	if (isset($_COOKIE['__flash_message'])) {
+		$message_prev = clause(
+			$_COOKIE['__flash_message'],
+			config('flash_message_open_tag'),
+			config('flash_message_close_tag')
+		);
+	} else {
+		$message_prev = '';
+	}
+	if ($message !== NULL && $message !== '') {
+		$_COOKIE['__flash_message'] = $message;
+	} else {
+		unset($_COOKIE['__flash_message']);
+	}
+	return $message_prev;
 }
 
 /**
