@@ -1059,7 +1059,7 @@ function tag_p($str)
 }
 
 /**
- * 文字列または数値を出力する
+ * 文字列または数値をエスケープする
  *
  * $valueが文字列の場合には、改行コードを&lt;br /&gt;に置換、
  * HTMLエスケープして出力する。
@@ -1075,7 +1075,7 @@ function tag_p($str)
  * @param	string	$default	デフォルトで出力する値
  * @package	html
  */
-function e($value, $width = 0, $default = '&nbsp;')
+function h($value, $width = 0, $default = '&nbsp;')
 {
 	if (is_int($value)) {
 		// 整数の出力
@@ -1097,8 +1097,22 @@ function e($value, $width = 0, $default = '&nbsp;')
 		}
 	}
 
-	// 文字列の出力
-	echo nl2br(htmlspecialchars($value));
+	// 文字列のエスケープ結果
+	return nl2br(htmlspecialchars($value));
+}
+
+/**
+ * 文字列または数値を出力する
+ *
+ * @param	mixed	$value		出力する文字列または数値
+ * @param	integer	$width		最大幅
+ * @param	string	$default	デフォルトで出力する値
+ * @see		h
+ * @package	html
+ */
+function e($value, $width = 0, $default = '&nbsp;')
+{
+	echo h($value, $width, $default);
 }
 
 //------------------------------------------------------------------------------
