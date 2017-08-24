@@ -3959,6 +3959,7 @@ function auth_id()
 function redirect($url)
 {
 	header('Location: ' . relative_url($url, get_request_url()));
+	exit;
 }
 
 /**
