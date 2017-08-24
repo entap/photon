@@ -2206,6 +2206,13 @@ function validate($data)
 /** @ignore */
 function __validate($data, $name, $rule, $value)
 {
+	// 入力の一致を調べる
+	if (isset($rule['matches'])) {
+		if ($value !== strval(array_get($data, $rule['matches']))) {
+			return form_set_error($name, config('error_matches'), $rule);
+		}
+	}
+
 	// 入力必須
 	$required = isset($rule['required']) ? is_true($rule['required']) : FALSE;
 	if (is_array($value)) {
@@ -2274,13 +2281,6 @@ function __validate($data, $name, $rule, $value)
 	}
 	if (isset($rule['max_value']) && $value > $rule['max_value']) {
 		return form_set_error($name, config('error_max_value'), $rule);
-	}
-
-	// 入力の一致を調べる
-	if (isset($rule['matches'])) {
-		if ($value !== strval(array_get($data, $rule['matches']))) {
-			return form_set_error($name, config('error_matches'), $rule);
-		}
 	}
 
 	// 選択肢からの選択可を調べる
