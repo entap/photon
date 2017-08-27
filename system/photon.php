@@ -672,6 +672,62 @@ function random_str($n)
 }
 
 /**
+ * 配列変数をCSVに変換する
+ *
+ * @param    array  $data   配列変数
+ * @param    array  $keys   出力するキーの配列
+ *
+ * @return    string    CSV
+ * @package    basic
+ */
+function array_to_csv($data, $keys)
+{
+	$fp = fopen('php://temp', 'w');
+	fputcsv($fp, $keys);
+	foreach ($data as $row) {
+		$fields = [];
+		foreach ($keys as $key) {
+			$fields[$key] = isset($row[$key]) ? strval($row[$key]) : '';
+		}
+		fputcsv($fp, $fields);
+	}
+	rewind($fp);
+	$str = stream_get_contents($fp);
+	fclose($fp);
+	return pack('C*', 0xEF, 0xBB, 0xBF) . $str;
+}
+
+/**
+ * CSVの文字列を配列変数に変換する
+ *
+ * @param    string $csv    CSVの文字列
+ * @param    array  $keys   出力するキーの配列
+ *
+ * @return    array    配列変数
+ * @package    basic
+ */
+function csv_to_array($csv, $keys)
+{
+	$encoding = mb_detect_encoding($csv, ['utf-8', 'utf-16', 'sjis-win']);
+	$csv = mb_convert_encoding($csv, 'utf-8', $encoding);
+	$fp = fopen('php://temp', 'w');
+	fwrite($fp, $csv);
+	rewind($fp);
+	if (fgetcsv($fp) != $keys) {
+		return FALSE; // 失敗
+	}
+	while ($fields = fgetcsv($fp)) {
+		$row = [];
+		foreach ($keys as $i => $key) {
+			$row[$key] = $fields[$i];
+		}
+		$data[] = $row;
+	}
+	fclose($fp);
+	return $data;
+}
+
+/**
  * 設定オプションの値を設定する
  *
  * 引数を一つだけ指定した場合には、設定オプションの値を取得する
@@ -3030,19 +3086,17 @@ function db_replace($table, $data)
 		unset($data[$pk]);
 	}
 	$query = __db_insert($table, $data);
-	if (isset($data[$pk])) {
-		unset($data[$pk]);
-		unset($data['created']);
-		if (count($data) == 0) {
-			$query = 'INSERT IGNORE' . substr($query, 6);
-		} else {
-			$query .= ' ON DUPLICATE KEY UPDATE ';
-			foreach ($data as $field => $value) {
-				$query .= db_quote_field($field) . "='";
-				$query .= db_escape($value) . "',";
-			}
-			$query = rtrim($query, ',');
+	unset($data[$pk]);
+	unset($data['created']);
+	if (count($data) == 0) {
+		$query = 'INSERT IGNORE' . substr($query, 6);
+	} else {
+		$query .= ' ON DUPLICATE KEY UPDATE ';
+		foreach ($data as $field => $value) {
+			$query .= db_quote_field($field) . "='";
+			$query .= db_escape($value) . "',";
 		}
+		$query = rtrim($query, ',');
 	}
 
 	// クエリを実行
@@ -3974,6 +4028,21 @@ function redirect($url)
 {
 	header('Location: ' . relative_url($url, get_request_url()));
 	exit;
+}
+
+/**
+ * コンテンツをダウンロードさせる
+ *
+ * @param   string  $filename   ファイル名
+ * @param   string  $content    コンテンツ
+ * @param   string  $type       MIMEタイプ
+ */
+function download($filename, $content, $type = 'application/octet-stream')
+{
+	header('Content-Type: ' . $type);
+	header('Content-Length: ' . strlen($content));
+	header('Content-Disposition: attachment; filename="' . $filename . '"');
+	echo $content;
 }
 
 /**
