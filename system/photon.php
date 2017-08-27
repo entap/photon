@@ -2721,6 +2721,54 @@ function db_rollback()
 }
 
 /**
+ * テーブルを削除する
+ *
+ * @param	string|array	$table	テーブル名
+ *
+ * @package	db
+ */
+function db_table_drop($table)
+{
+	if (is_array($table)) {
+		foreach ($table as $tbl) {
+			db_table_drop($tbl);
+		}
+	} elseif (is_string($table)) {
+		db_query('DROP TABLE IF EXISTS ' . db_quote_field($table));
+	}
+}
+
+/**
+ * テーブル名を変更する
+ *
+ * @param	string	$old_table	現在のテーブル名
+ * @param	string	$new_table	新しいテーブル名
+ *
+ * @package	db
+ */
+function db_table_rename($old_table, $new_table)
+{
+	db_query('ALTER TABLE ' . db_quote_field($old_table) . ' RENAME TO ' . db_quote_field($new_table));
+}
+
+/**
+ * テーブルを複製する
+ *
+ * @param	string	$old_table	現在のテーブル名
+ * @param	string	$new_table	新しいテーブル名
+ * @param	boolean	$with_data	データのコピーをするか？
+ *
+ * @package	db
+ */
+function db_table_copy($old_table, $new_table, $with_data)
+{
+	db_query('CREATE TABLE ' . db_quote_field($new_table) . ' LIKE ' . db_quote_field($old_table));
+	if ($with_data) {
+		db_query('INSERT INTO ' . db_quote_field($new_table) . ' SELECT * FROM ' . db_quote_field($old_table));
+	}
+}
+
+/**
  * クエリ文を実行し、結果をレコードの配列で取得する
  *
  * @param	string	$query		クエリ文
