@@ -2143,6 +2143,17 @@ function form_error($name)
 }
 
 /**
+ * フィルタ・バリデーションルールを初期化する
+ *
+ * @package	validate
+ */
+function rule_clean()
+{
+	global $__photon_form_rule;
+	$__photon_form_rule = array();
+}
+
+/**
  * フィルタ・バリデーションルールを設定する
  *
  * @param	string	$name	対象のフォームの名前
