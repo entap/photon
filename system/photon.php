@@ -694,7 +694,7 @@ function array_to_csv($data, $keys)
 	rewind($fp);
 	$str = stream_get_contents($fp);
 	fclose($fp);
-	return pack('C*', 0xEF, 0xBB, 0xBF) . $str;
+	return pack('C*', 0xef, 0xbb, 0xbf) . $str;
 }
 
 /**
@@ -709,6 +709,9 @@ function array_to_csv($data, $keys)
 function csv_to_array($csv, $keys)
 {
 	$encoding = mb_detect_encoding($csv, ['utf-8', 'utf-16', 'sjis-win']);
+	if (ord($csv[0]) == 0xef && ord($csv[1]) == 0xbb && ord($csv[2]) == 0xbf) {
+		$csv = substr($csv, 3);
+	}
 	$csv = mb_convert_encoding($csv, 'utf-8', $encoding);
 	$fp = fopen('php://temp', 'w');
 	fwrite($fp, $csv);
