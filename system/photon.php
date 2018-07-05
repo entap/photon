@@ -3970,9 +3970,9 @@ function sendmail($to, $from, $subject, $message)
 /**
  * 認証領域を定義し、現在の認証領域に設定する
  *
- * @param	string	$realm	認証領域の名前
- * @param	string	$url	認証するためのログインURL
- * @package	auth
+ * @param    string $realm 認証領域の名前
+ * @param    string $url 認証するためのログインURL
+ * @package    auth
  */
 function auth_realm($realm, $url)
 {
@@ -3986,8 +3986,9 @@ function auth_realm($realm, $url)
 	// 復号化
 	$key = config('secret_key');
 	if (isset($_COOKIE[$realm])) {
+		$iv = substr(sha1($key), 0, 16);
 		$str = base64_decode($_COOKIE[$realm]);
-		$str = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+		$str = openssl_decrypt($str, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
 	} else {
 		$str = NULL;
 	}
@@ -3995,7 +3996,7 @@ function auth_realm($realm, $url)
 	// ユーザ識別子を設定
 	$__photon_id = '';
 	if ($str !== NULL) {
-		list($realm_check, $id, $time, ) = unserialize($str);
+		list($realm_check, $id, $time,) = unserialize($str);
 		if ($realm_check === $realm && is_numeric($time)) {
 			$time = intval($time);
 			$expire = $time + config('auth_expire');
@@ -4010,8 +4011,8 @@ function auth_realm($realm, $url)
 /**
  * 現在の認証領域にログインする
  *
- * @param	integer	$id	ユーザの識別子 (0以外の値)
- * @package	auth
+ * @param    integer $id ユーザの識別子 (0以外の値)
+ * @package    auth
  */
 function auth_login($id)
 {
@@ -4027,8 +4028,9 @@ function auth_login($id)
 	// 暗号化
 	$key = config('secret_key');
 	$random = openssl_random_pseudo_bytes(256);
+	$iv = substr(sha1($key), 0, 16);
 	$str = serialize(array($__photon_realm, $id, time(), $random));
-	$str = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $str, MCRYPT_MODE_ECB);
+	$str = openssl_encrypt($str, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
 	$str = base64_encode($str);
 	setcookie($__photon_realm, $str);
 }
