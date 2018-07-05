@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2014-2017, Entap,Inc.
+ * Copyright (c) 2014-2018, Entap,Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  */
 //
 //	Photon -- a simple php library for building simple web applications
-//	http://entap.github.com/photon
+//	http://github.com/entap/photon
 //
 
 require_once dirname(__FILE__) . '/photon_config.php';
@@ -4211,7 +4211,7 @@ function render($filename, $data = array(), $return = FALSE)
 	$__filename = $filename;
 	$__data = $data;
 	$__return = $return;
-	$__ob = $return || count($__photon_filter);
+	$__ob = $return || ($__photon_filter && count($__photon_filter));
 	unset($data['__filename']);
 	unset($data['__data']);
 	unset($data['__return']);
