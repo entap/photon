@@ -3798,7 +3798,7 @@ function sql_where_search($fields, $keywords)
 		$fields = array($fields);
 	}
 	if (!is_array($keywords)) {
-		$keywords = explode(' ', mb_convert_kana($keywords, 's'));
+		$keywords = explode(' ', mb_convert_kana($keywords, 's', 'utf-8'));
 	}
 	$str = '(1=1';
 	foreach ($keywords as $keyword) {
