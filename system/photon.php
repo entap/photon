@@ -1980,6 +1980,10 @@ function form_get_file($name, $key)
  */
 function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 {
+	if (array_get($data, '__remove_' . $name) == 'y') {
+		array_set($data, $name, '');
+		return;
+	}
 	$error = form_get_file($name, 'error');
 	if ($error === NULL) {
 		return;
@@ -2028,12 +2032,6 @@ function form_upload_file(&$data, $name, $dir = NULL, $extensions = NULL)
 	} elseif ($error != UPLOAD_ERR_NO_FILE) {
 		// エラー
 		return form_set_error($name, config('error_upload'));
-	}
-
-	// ファイル削除
-	$remove_name = '__remove_' . $name;
-	if (array_get($_REQUEST, $remove_name) == 'y') {
-		array_set($data, $name, '');
 	}
 }
 
@@ -3798,7 +3796,7 @@ function sql_where_search($fields, $keywords)
 		$fields = array($fields);
 	}
 	if (!is_array($keywords)) {
-		$keywords = explode(' ', mb_convert_kana($keywords, 's', 'utf-8'));
+		$keywords = explode(' ', mb_convert_kana($keywords, 's'));
 	}
 	$str = '(1=1';
 	foreach ($keywords as $keyword) {
