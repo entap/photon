@@ -492,7 +492,7 @@ function is_true($var)
  * 					そうでない場合にはFALSE
  * @package	basic
  */
-function is_mail($str)
+function is_valid_mail($str)
 {
 	return preg_match('/^[a-z0-9._+^~-]+@[a-z0-9.-]+$/i', $str) ? TRUE : FALSE;
 }
@@ -505,7 +505,7 @@ function is_mail($str)
  * 					そうでない場合にはFALSE
  * @package	basic
  */
-function is_ipv4($str)
+function is_valid_ipv4($str)
 {
 	return long2ip(ip2long($str)) === $str ? TRUE : FALSE;
 }
@@ -517,7 +517,7 @@ function is_ipv4($str)
  * @return	boolean	ひらがなならTRUE。そうでない場合にはFALSE
  * @package	basic
  */
-function is_hiragana($str)
+function is_valid_hiragana($str)
 {
 	return preg_match("/^[ぁ-ん]+$/u", $str);
 }
@@ -529,9 +529,31 @@ function is_hiragana($str)
  * @return	boolean	ひらがなならTRUE。そうでない場合にはFALSE
  * @package	basic
  */
-function is_katakana($str)
+function is_valid_katakana($str)
 {
 	return preg_match("/^[ァ-ヶー]+$/u", $str);
+}
+
+/**
+ * 文字列が日付・時間として正しいか調べる
+ *
+ * @param	string	$value	対象の文字列
+ * @return	boolean	日付・時間として正しいならTRUE。そうでない場合にはFALSE
+ * @package	basic
+ */
+function is_valid_date($value)
+{
+	if (is_array($value)) {
+		$str = $value['y'] . '-' . $value['m'] . '-' . $value['d'];
+		if (isset($value['h'])) {
+			$str .= $value['h'] . ':' . $value['i'] . ':' . $value['s'];
+		}
+		return is_valid_date($str);
+	} else if (strlen($value) == 10) {
+		return date('Y-m-d', strtotime($value)) == $value;
+	} else {
+		return date('Y-m-d H:i:s', strtotime($value)) == $value;
+	}
 }
 
 /**
@@ -728,6 +750,26 @@ function csv_to_array($csv, $keys)
 	}
 	fclose($fp);
 	return $data;
+}
+
+/**
+ * コマンドがインストールされているパスを検索する
+ *
+ * @param	string	$command	コマンドの名前
+ * @param	string	$required	コマンドが存在しない場合には致命的エラーにする
+ * @package	basic
+ */
+function command_path($command, $required = TRUE)
+{
+	foreach (['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin', '/usr/local/sbin'] as $dir) {
+		if (file_exists($dir. '/' . $command)) {
+			return $dir. '/' . $command;
+		}
+	}
+	if ($required) {
+		fatal('Command not found: ' . $command);
+	}
+	return NULL;
 }
 
 /**
@@ -2269,6 +2311,7 @@ function __filter($value, $rule)
  * |^			| hiragana	| ひらがな
  * |^			| katakana	| カタカナ
  * |^			| url		| URL
+ * |^			| date		| 日付・時間
  *
  * @param	array	$data	バリデーションを行う連想配列
  * @return	boolean	エラーが発生しなかった場合にはTRUE、そうでない場合にはFALSE
@@ -2425,28 +2468,33 @@ function __validate($data, $name, $rule, $value)
 			}
 			break;
 		case 'mail':
-			if (!is_mail($value)) {
+			if (!is_valid_mail($value)) {
 				return form_set_error($name, config('error_mail'), $rule);
 			}
 			break;
 		case 'ipv4':
-			if (!is_ipv4($value)) {
+			if (!is_valid_ipv4($value)) {
 				return form_set_error($name, config('error_ipv4'), $rule);
 			}
 			break;
 		case 'hiragana':
-			if (!is_hiragana($value)) {
+			if (!is_valid_hiragana($value)) {
 				return form_set_error($name, config('error_hiragana'), $rule);
 			}
 			break;
 		case 'katakana':
-			if (!is_katakana($value)) {
+			if (!is_valid_katakana($value)) {
 				return form_set_error($name, config('error_katakana'), $rule);
 			}
 			break;
 		case 'url':
 			if (parse_url($value)== -1) {
 				return form_set_error($name, config('error_url'), $rule);
+			}
+			break;
+		case 'date':
+			if (!is_valid_date($value)) {
+				return form_set_error($name, config('error_date'), $rule);
 			}
 			break;
 		default:
