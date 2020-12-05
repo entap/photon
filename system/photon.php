@@ -4390,7 +4390,7 @@ function __photon_init()
 	}
 
 	// PHPの拡張を調べる
-	foreach (array('gd', 'mcrypt', 'mbstring', 'mysqli') as $extension) {
+	foreach (array('gd', 'openssl', 'mbstring', 'mysqli') as $extension) {
 		if (!extension_loaded($extension)) {
 			die('This application requires extension: ' . $extension);
 		}
